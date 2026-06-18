@@ -1,0 +1,38 @@
+# IBC Office Tracker — web root rules
+
+# UTF-8 + sane defaults
+AddDefaultCharset UTF-8
+Options -Indexes
+DirectoryIndex index.php
+
+# Block access to sensitive folders no matter how the app is deployed
+RedirectMatch 403 (?i)^/?(lib|sql|storage)(/|$)
+
+# Block dotfiles and source/backup files (config, git, sql dumps, markdown, samples)
+<FilesMatch "(?i)(^\.|\.(sql|md|sample\.php|log|ya?ml|json|lock|dist|bak)$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# config.php is PHP (won't leak), but deny direct hits anyway
+<Files "config.php">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>
+
+# Sensible security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

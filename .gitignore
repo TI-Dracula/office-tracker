@@ -1,0 +1,15 @@
+# Local config with DB credentials & secrets — never commit
+config.php
+.installed
+
+# Uploaded files (live on the server, not in git)
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Local visual-preview harness (not part of the deployed app)
+_preview/
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+*.log

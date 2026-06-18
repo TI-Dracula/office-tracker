@@ -1,0 +1,9 @@
+# Never serve uploaded files directly. They are streamed only through api.php
+# (which checks that you are logged in). This is a hard stop.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

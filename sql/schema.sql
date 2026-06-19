@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS activity_log (
 
 -- Seed the four buildings (edit towers/floors/colours later in Settings → Buildings)
 INSERT IGNORE INTO locations (code, name, maps_url, towers, floors, color, sort_order) VALUES
-  ('DD',    'DD',    'https://maps.app.goo.gl/hsSoK8svoUvTbM7s6', 'A',   10, '#6ea8fe', 1),
-  ('1-OAR', '1-OAR', 'https://maps.app.goo.gl/eJqbFtLEVf4vr1VA6', 'A',   10, '#a78bfa', 2),
-  ('GE',    'GE',    'https://maps.app.goo.gl/EfuXFdUBstGaVN3H8', 'A',   10, '#34d399', 3),
-  ('KP',    'KP',    'https://maps.app.goo.gl/BcXhoTejHwMxqWmeA', 'A',   10, '#fbbf24', 4);
+  ('DD',    'DD',    'https://maps.app.goo.gl/hsSoK8svoUvTbM7s6', 'A,B,C,D', 8,  '#6ea8fe', 1),
+  ('1-OAR', '1-OAR', 'https://maps.app.goo.gl/eJqbFtLEVf4vr1VA6', 'A',       9,  '#a78bfa', 2),
+  ('GE',    'GE',    'https://maps.app.goo.gl/EfuXFdUBstGaVN3H8', 'A',       8,  '#34d399', 3),
+  ('KP',    'KP',    'https://maps.app.goo.gl/BcXhoTejHwMxqWmeA', 'C,D',     13, '#fbbf24', 4);

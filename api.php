@@ -15,6 +15,7 @@ $routes = [
     'login'           => ['h_login',            'public', false, true],
     'logout'          => ['h_logout',           'public', false, true],
     'me'              => ['h_me',               'public', false, false],
+    'change_password' => ['h_change_password',  'user',   true,  true],
 
     'dashboard'       => ['h_dashboard',        'user',   false, false],
 

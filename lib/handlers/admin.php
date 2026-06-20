@@ -122,6 +122,7 @@ function h_user_save(): void {
         }
         $id = (int)db()->lastInsertId();
         log_activity('user_create', "User #$id");
+        if ($email) send_welcome_email($email, $name, $username, $password);
     }
     json_out(['ok' => true, 'id' => $id]);
 }
@@ -152,4 +153,37 @@ function h_settings_save(): void {
     if (isset($in['currency_symbol'])) setting_set('currency_symbol', clean($in['currency_symbol']) ?? '₹');
     log_activity('settings_update', '');
     json_out(['ok' => true]);
+}
+
+/**
+ * Email a newly-created user their login details.
+ * Uses PHP mail() (free on cPanel/InMotion). On a host without a mail server
+ * (e.g. local XAMPP) it silently no-ops — it must never break user creation.
+ */
+function send_welcome_email(string $to, string $name, string $username, string $password): void {
+    try {
+        $app    = (string) setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $base   = $scheme . '://' . $host . rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+        $loginUrl = $base . '/index.php';
+
+        $subject = "Your $app account";
+        $body =
+            "Hi $name,\r\n\r\n" .
+            "An account has been created for you on $app.\r\n\r\n" .
+            "Sign in here: $loginUrl\r\n" .
+            "Username: $username\r\n" .
+            "Temporary password: $password\r\n\r\n" .
+            "Please sign in and change your password right away from the account menu (your initial, top-right).\r\n\r\n" .
+            "— $app";
+
+        $fromDomain = preg_replace('/^www\./', '', explode(':', $host)[0]) ?: 'localhost';
+        $from = (string) cfg('app.mail_from', 'no-reply@' . $fromDomain);
+        $headers = "From: $app <$from>\r\nReply-To: $from\r\nContent-Type: text/plain; charset=UTF-8\r\nX-Mailer: PHP";
+
+        @mail($to, $subject, $body, $headers);
+    } catch (Throwable $e) {
+        // swallow — account creation must succeed regardless of mail delivery
+    }
 }

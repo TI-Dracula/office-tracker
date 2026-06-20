@@ -5,6 +5,12 @@ $user = current_user();
 $appName = setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
 $cur = currency_symbol();
 
+/* Reusable inline SVGs — premium line icons, no emojis */
+$svgBuilding = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l7-3 7 3v15"/><path d="M9 21v-5h4v5"/><path d="M8 8h.01M14 8h.01M8 12h.01M14 12h.01"/></svg>';
+$svgPlus     = '<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+$svgDownload = '<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>';
+$svgLogout   = '<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>';
+
 /* ---------------- Not logged in: show login ---------------- */
 if (!$user):
 ?><!doctype html>
@@ -19,7 +25,7 @@ if (!$user):
 </head><body>
 <div class="login-wrap">
   <form class="login panel" id="loginForm">
-    <div class="logo-lg">🏢</div>
+    <div class="logo-lg"><?= $svgBuilding ?></div>
     <h1><?= e($appName) ?></h1>
     <p class="s">Sign in to continue</p>
     <div class="err" id="loginErr"></div>
@@ -66,23 +72,23 @@ window.APP = {
 
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo">🏢</div><div><?= e($appName) ?><small>OFFICE OPERATIONS</small></div></div>
+    <div class="brand"><div class="logo"><?= $svgBuilding ?></div><div><?= e($appName) ?><small>OFFICE OPERATIONS</small></div></div>
     <nav class="nav" id="nav">
-      <a data-view="dashboard" class="active">📊 <span class="txt">Dashboard</span></a>
-      <a data-view="invoices">🧾 <span class="txt">Invoices</span></a>
-      <a data-view="projects">🏗️ <span class="txt">Projects</span></a>
+      <a data-view="dashboard" class="active">Dashboard</a>
+      <a data-view="invoices">Invoices</a>
+      <a data-view="projects">Projects</a>
+      <a data-view="pricing">IT Pricing</a>
       <?php if (is_admin()): ?>
-      <a data-view="buildings">🏙️ <span class="txt">Buildings</span></a>
-      <a data-view="users">👥 <span class="txt">Users</span></a>
-      <a data-view="settings">⚙️ <span class="txt">Settings</span></a>
+      <a data-view="users">Users</a>
+      <a data-view="settings">Settings</a>
       <?php endif; ?>
     </nav>
     <div class="spacer"></div>
     <div class="usermenu">
       <div class="meta right"><b><?= e($user['name']) ?></b><br><span><?= e(ucfirst($user['role'])) ?></span></div>
-      <div class="avatar"><?= e(strtoupper(substr($user['name'],0,1))) ?></div>
-      <button class="btn ghost sm" id="themeToggle" title="Toggle light / dark theme">☾</button>
-      <button class="btn ghost sm" id="logoutBtn" title="Sign out">⎋</button>
+      <div class="avatar" id="profileBtn" title="My account" style="cursor:pointer"><?= e(strtoupper(substr($user['name'],0,1))) ?></div>
+      <button class="btn ghost sm" id="themeToggle" title="Toggle light / dark theme"></button>
+      <button class="btn ghost sm" id="logoutBtn" title="Sign out"><?= $svgLogout ?></button>
     </div>
   </header>
 
@@ -97,7 +103,7 @@ window.APP = {
     <section class="view" id="view-invoices">
       <div class="page-head">
         <div><h1>Invoices</h1><div class="sub">Track everything submitted to finance</div></div>
-        <button class="btn primary" id="addInvoiceBtn">＋ Add invoice</button>
+        <button class="btn primary" id="addInvoiceBtn"><?= $svgPlus ?> Add invoice</button>
       </div>
       <div class="toolbar">
         <div class="search">
@@ -114,7 +120,7 @@ window.APP = {
           <input id="invFrom" type="date" title="From date">
           <input id="invTo" type="date" title="To date">
           <button class="btn sm" id="invClear">Clear</button>
-          <button class="btn sm" id="invExport">⬇ CSV</button>
+          <button class="btn sm" id="invExport"><?= $svgDownload ?> CSV</button>
         </div>
       </div>
       <div class="summary panel" id="invSummary"></div>
@@ -137,12 +143,12 @@ window.APP = {
     <section class="view" id="view-projects">
       <div class="page-head">
         <div><h1>Projects</h1><div class="sub">New fit-outs across DD · 1-OAR · GE · KP</div></div>
-        <button class="btn primary" id="addProjectBtn">＋ Add project</button>
+        <button class="btn primary" id="addProjectBtn"><?= $svgPlus ?> Add project</button>
       </div>
       <div class="subtabs" id="projTabs">
-        <button data-tab="buildings" class="active">🏙️ Building view</button>
-        <button data-tab="cards">🗂️ Open projects</button>
-        <button data-tab="table">📋 Table</button>
+        <button data-tab="buildings" class="active">Building view</button>
+        <button data-tab="cards">Open projects</button>
+        <button data-tab="table">Table</button>
       </div>
       <div class="toolbar">
         <div class="search">
@@ -174,17 +180,17 @@ window.APP = {
       </table></div></div>
     </section>
 
-    <?php if (is_admin()): ?>
-    <!-- BUILDINGS (admin) -->
-    <section class="view" id="view-buildings">
-      <div class="page-head"><div><h1>Buildings</h1><div class="sub">Set towers, floors &amp; colours so the visual matches reality</div></div></div>
-      <div id="bldEditor" class="buildings"><div class="spin"></div></div>
+    <!-- IT PRICING -->
+    <section class="view" id="view-pricing">
+      <div class="page-head"><div><h1>IT Pricing</h1><div class="sub">Internet &amp; access-control rate cards · vendor + 18% GST + 30% MOSS convenience</div></div></div>
+      <div id="pricingContent"><div class="spin"></div></div>
     </section>
 
+    <?php if (is_admin()): ?>
     <!-- USERS (admin) -->
     <section class="view" id="view-users">
       <div class="page-head"><div><h1>Users</h1><div class="sub">Who can access this tool</div></div>
-        <button class="btn primary" id="addUserBtn">＋ Add user</button></div>
+        <button class="btn primary" id="addUserBtn"><?= $svgPlus ?> Add user</button></div>
       <div class="panel"><div class="tablewrap"><table>
         <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
         <tbody id="usersBody"></tbody>
@@ -217,18 +223,46 @@ window.APP = {
 <script src="assets/js/dashboard.js"></script>
 <script src="assets/js/invoices.js"></script>
 <script src="assets/js/projects.js"></script>
+<script src="assets/js/pricing.js"></script>
 <?php if (is_admin()): ?><script src="assets/js/admin.js"></script><?php endif; ?>
 <script>App.start();</script>
 <script>
+/* Theme toggle (moon / sun SVG) */
 (function(){
   var b=document.getElementById('themeToggle'); if(!b) return;
-  function sync(){ b.textContent = document.documentElement.getAttribute('data-theme')==='light' ? '☀' : '☾'; }
+  var MOON='<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>';
+  var SUN='<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4"/></svg>';
+  function sync(){ b.innerHTML = document.documentElement.getAttribute('data-theme')==='light' ? SUN : MOON; }
   sync();
   b.onclick=function(){
     var light = document.documentElement.getAttribute('data-theme')==='light';
     if(light){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('ibc-theme','dark');}catch(e){} }
     else     { document.documentElement.setAttribute('data-theme','light'); try{localStorage.setItem('ibc-theme','light');}catch(e){} }
     sync();
+  };
+})();
+/* Profile · change own password */
+(function(){
+  var p=document.getElementById('profileBtn'); if(!p) return;
+  p.onclick=function(){
+    var m=App.openModal({
+      title:'My account',
+      body:'<div class="formgrid">'
+        +'<div class="field full"><label class="lbl">Signed in as</label><input value="'+App.esc(APP.user.name)+' ('+App.esc(APP.user.username)+')" disabled></div>'
+        +'<div class="field full"><label class="lbl">Current password</label><input id="cp_cur" type="password" autocomplete="current-password"></div>'
+        +'<div class="field"><label class="lbl">New password</label><input id="cp_new" type="password" autocomplete="new-password"></div>'
+        +'<div class="field"><label class="lbl">Confirm new password</label><input id="cp_conf" type="password" autocomplete="new-password"></div>'
+        +'</div>',
+      foot:'<button class="btn ghost" data-close>Close</button><button class="btn primary" id="cp_save">Change password</button>'
+    });
+    m.querySelector('#cp_save').onclick=async function(){
+      var cur=m.querySelector('#cp_cur').value, nw=m.querySelector('#cp_new').value, cf=m.querySelector('#cp_conf').value;
+      if(nw.length<6){ App.toast('New password must be at least 6 characters.','err'); return; }
+      if(nw!==cf){ App.toast('New passwords do not match.','err'); return; }
+      var sb=m.querySelector('#cp_save'); sb.disabled=true; sb.textContent='Saving…';
+      try{ await App.api('change_password',{method:'POST',body:{current:cur,'new':nw}}); App.toast('Password changed.','ok'); App.closeModal(); }
+      catch(e){ App.toast(e.message,'err'); sb.disabled=false; sb.textContent='Change password'; }
+    };
   };
 })();
 </script>

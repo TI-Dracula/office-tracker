@@ -53,3 +53,24 @@ function h_me(): void {
         'app_name' => setting_get('app_name', cfg('app.name', 'IBC Office Tracker')),
     ]);
 }
+
+function h_change_password(): void {
+    $u = current_user();
+    if (!$u) json_error('Please log in.', 401);
+    $in  = json_input();
+    $cur = (string)($in['current'] ?? '');
+    $new = (string)($in['new'] ?? '');
+    if (strlen($new) < 6) json_error('New password must be at least 6 characters.', 422);
+
+    // current_user() doesn't include the hash — fetch it directly.
+    $st = db()->prepare('SELECT password_hash FROM users WHERE id = ?');
+    $st->execute([$u['id']]);
+    $hash = $st->fetchColumn();
+    if (!$hash || !password_verify($cur, $hash)) {
+        json_error('Your current password is incorrect.', 403);
+    }
+    db()->prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+        ->execute([password_hash($new, PASSWORD_DEFAULT), (int)$u['id']]);
+    log_activity('password_change', 'Changed own password');
+    json_out(['ok' => true]);
+}

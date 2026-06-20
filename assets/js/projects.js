@@ -107,9 +107,7 @@
 
       return `<div class="building panel" style="--bcol:${App.esc(loc.color)}">
         <div class="bhead">
-          <div class="bcode">${App.esc(loc.code)}</div>
-          <div><div class="bname">${App.esc(loc.name)}</div><div class="bsub">${towers.length} tower${towers.length>1?'s':''} · ${loc.floors} floors</div></div>
-          ${loc.maps_url ? `<a class="maps" href="${App.esc(loc.maps_url)}" target="_blank" rel="noopener">📍 Map</a>` : ''}
+          <div class="bname">${App.esc(loc.name)}</div>
         </div>
         <div class="bmeta">
           <div><b>${activeCount}</b>active projects</div>
@@ -134,7 +132,7 @@
       if (a.handover_date && b.handover_date) return a.handover_date.localeCompare(b.handover_date);
       return a.handover_date ? -1 : 1;
     });
-    if (!list.length) { wrap.innerHTML = '<div class="panel empty" style="grid-column:1/-1"><div class="big">🏗️</div>No projects yet.</div>'; return; }
+    if (!list.length) { wrap.innerHTML = '<div class="panel empty" style="grid-column:1/-1">No projects yet.</div>'; return; }
     wrap.innerHTML = list.map(p => {
       const u = App.urgency(p.days_left);
       const cd = p.handover_date ? `<div class="countdown ${u}">
@@ -151,7 +149,7 @@
           <span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span>
           ${p.tower?`<span class="t">Tower ${App.esc(p.tower)}</span>`:''}
           ${p.floor?`<span class="t">Floor ${p.floor}</span>`:''}
-          ${p.file_count>0?`<span class="t">📎 ${p.file_count}</span>`:''}
+          ${p.file_count>0?`<span class="t">${App.icon('clip')} ${p.file_count}</span>`:''}
         </div>
         ${cd}
       </div>`;
@@ -173,15 +171,15 @@
       const hd = p.handover_date
         ? `${App.fmtDate(p.handover_date)} <span class="tiny" style="color:var(--${u==='urgent'?'bad':u==='soon'?'warn':u==='past'?'mut':'ok'})">· ${App.daysLabel(p.days_left)}</span>`
         : '<span class="muted">—</span>';
-      const actions = p.can_edit ? `<button class="btn icon sm ghost" data-edit="${p.id}" title="Edit">✎</button>
-          <button class="btn icon sm danger" data-del="${p.id}" title="Delete">🗑</button>` : '';
+      const actions = p.can_edit ? `<button class="btn icon sm ghost" data-edit="${p.id}" title="Edit">${App.icon('edit')}</button>
+          <button class="btn icon sm danger" data-del="${p.id}" title="Delete">${App.icon('trash')}</button>` : '';
       return `<tr data-proj="${p.id}" style="cursor:pointer">
         <td><b>${App.esc(p.name)}</b>${p.client?`<div class="tiny muted">${App.esc(p.client)}</div>`:''}</td>
         <td><span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span></td>
         <td class="tiny">${p.tower?'Tower '+App.esc(p.tower):'—'}${p.floor?' · Fl '+p.floor:''}</td>
         <td class="nowrap">${hd}</td>
         <td>${App.badge(p.status)}</td>
-        <td>${p.file_count>0?`📎 ${p.file_count}`:'<span class="muted">—</span>'}</td>
+        <td>${p.file_count>0?`${App.icon('clip')} ${p.file_count}`:'<span class="muted">—</span>'}</td>
         <td><div class="row-actions">${actions}</div></td>
       </tr>`;
     }).join('');
@@ -212,7 +210,7 @@
             <div class="fi">${App.fileIcon(f.original_name)}</div>
             <div class="fn"><b>${App.esc(f.original_name)}</b><span>${App.esc(f.doc_type)} · ${App.fileSize(f.size)}</span></div>
             <a class="btn sm ghost" href="api.php?action=file_download&type=project&id=${f.id}" target="_blank">View</a>
-            ${p.can_edit?`<button class="btn sm danger" data-rmfile="${f.id}" data-type="project">✕</button>`:''}
+            ${p.can_edit?`<button class="btn sm danger" data-rmfile="${f.id}" data-type="project">${App.icon('close')}</button>`:''}
           </div>`).join('')}</div>`
       : '<div class="muted tiny">No documents uploaded yet.</div>';
 
@@ -220,7 +218,7 @@
       <div class="flex mt" style="gap:8px">
         <select id="f_doctype" style="max-width:150px"><option>LOI</option><option>Layout</option><option>Agreement</option><option>Quotation</option><option>Other</option></select>
       </div>
-      <div class="dropzone mt" data-drop>📎 Click or drop to upload a document
+      <div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop to upload a document
         <input type="file" hidden data-fileinput></div>` : '';
 
     App.openDrawer(`
@@ -241,14 +239,14 @@
           ${p.floor?`<span class="loc-chip">Floor ${p.floor}</span>`:''}
           ${p.area_sqft?`<span class="loc-chip">${(+p.area_sqft).toLocaleString('en-IN')} sq.ft</span>`:''}
         </div>
-        ${p.location_maps?`<a class="tiny mt" style="display:inline-block" href="${App.esc(p.location_maps)}" target="_blank" rel="noopener">📍 Open ${App.esc(p.location_code||'building')} in Google Maps</a>`:''}
+        ${p.location_maps?`<a class="tiny mt" style="display:inline-block" href="${App.esc(p.location_maps)}" target="_blank" rel="noopener">Open ${App.esc(p.location_code||'building')} in Google Maps</a>`:''}
         ${p.notes?`<div class="dlabel">Notes</div><div class="tiny" style="color:var(--ink-soft);white-space:pre-wrap">${App.esc(p.notes)}</div>`:''}
         <div class="dlabel">Documents (LOI &amp; more)</div>
         <div id="dDocs">${docs}</div>
         ${uploader}
         <div class="mt2 flex" style="gap:8px">
-          ${p.can_edit?`<button class="btn" id="dEdit">✎ Edit project</button>`:''}
-          ${p.can_edit?`<button class="btn danger" id="dDel">🗑 Delete</button>`:''}
+          ${p.can_edit?`<button class="btn" id="dEdit">${App.icon('edit')} Edit project</button>`:''}
+          ${p.can_edit?`<button class="btn danger" id="dDel">${App.icon('trash')} Delete</button>`:''}
         </div>
         <div class="tiny muted mt2">Added by ${App.esc(p.creator_name||'—')}</div>
       </div>`);
@@ -270,7 +268,7 @@
       .map(s => `<option value="${s}" ${p.status===s?'selected':''}>${App.STATUS_LABEL[s]}</option>`).join('');
     const filesHtml = id ? `<div class="files mt">${(p.files||[]).map(f => App._files.fileRow(f, 'project')).join('')}</div>
         <div class="flex mt" style="gap:8px"><select id="f_doctype" style="max-width:150px"><option>LOI</option><option>Layout</option><option>Agreement</option><option>Quotation</option><option>Other</option></select></div>
-        <div class="dropzone mt" data-drop>📎 Click or drop to upload<input type="file" hidden data-fileinput></div>`
+        <div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop to upload<input type="file" hidden data-fileinput></div>`
       : '<p class="tiny muted">Save the project first, then upload the LOI &amp; documents.</p>';
 
     const m = App.openModal({
@@ -302,7 +300,7 @@
       const np = (await App.api('project_get', { params: { id } })).project;
       m.querySelector('#f_files_p').innerHTML = `<div class="files mt">${(np.files||[]).map(f => App._files.fileRow(f,'project')).join('')}</div>
         <div class="flex mt" style="gap:8px"><select id="f_doctype" style="max-width:150px"><option>LOI</option><option>Layout</option><option>Agreement</option><option>Quotation</option><option>Other</option></select></div>
-        <div class="dropzone mt" data-drop>📎 Click or drop to upload<input type="file" hidden data-fileinput></div>`;
+        <div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop to upload<input type="file" hidden data-fileinput></div>`;
       App._files.wireFileArea(m, 'project', id, refreshFormDocs);
     }
     if (id) App._files.wireFileArea(m, 'project', id, refreshFormDocs);

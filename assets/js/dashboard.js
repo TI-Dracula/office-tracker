@@ -45,34 +45,34 @@
 
     box.innerHTML = `
       <div class="stats">
-        <div class="stat panel"><div class="ic">🧾</div><div class="lab">Invoices logged</div>
+        <div class="stat panel"><div class="lab">Invoices logged</div>
           <div class="val">${inv.count}</div><div class="delta">${App.money(inv.total)} total value</div></div>
-        <div class="stat panel"><div class="ic">📅</div><div class="lab">This month</div>
+        <div class="stat panel"><div class="lab">This month</div>
           <div class="val">${App.moneyShort(inv.month_total)}</div><div class="delta">invoiced this calendar month</div></div>
-        <div class="stat panel"><div class="ic">🏗️</div><div class="lab">Open projects</div>
+        <div class="stat panel"><div class="lab">Open projects</div>
           <div class="val">${prj.open}</div><div class="delta">${prj.total} projects total</div></div>
-        <div class="stat panel"><div class="ic">⏳</div><div class="lab">Handovers ≤30d</div>
+        <div class="stat panel"><div class="lab">Handovers ≤30d</div>
           <div class="val">${prj.upcoming.length}</div><div class="delta">upcoming deadlines</div></div>
       </div>
 
       <div class="grid2">
         <div class="panel panel-pad">
-          <div class="card-title">📈 Invoice value — last 6 months <span class="pill">${App.money(inv.total)} all-time</span></div>
+          <div class="card-title">Invoice value — last 6 months <span class="pill">${App.money(inv.total)} all-time</span></div>
           <div class="chart">${trendBars}</div>
         </div>
         <div class="panel panel-pad">
-          <div class="card-title">🏆 Top vendors</div>
+          <div class="card-title">Top vendors</div>
           <div class="vlist">${topV}</div>
         </div>
       </div>
 
       <div class="grid2 mt2">
         <div class="panel panel-pad">
-          <div class="card-title">⏰ Upcoming handovers</div>
+          <div class="card-title">Upcoming handovers</div>
           <div class="vlist">${upcoming}</div>
         </div>
         <div class="panel panel-pad">
-          <div class="card-title">🏙️ Active projects by location</div>
+          <div class="card-title">Active projects by location</div>
           <div class="mt">${locBars || '<div class="muted tiny">No locations.</div>'}</div>
         </div>
       </div>`;

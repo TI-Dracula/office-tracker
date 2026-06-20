@@ -38,6 +38,24 @@ const App = (() => {
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  /* ---------- Inline SVG icons (premium line icons — no emojis) ---------- */
+  const ICONS = {
+    edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    trash:'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/>',
+    view:'<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>',
+    download:'<path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/>',
+    close:'<path d="M6 6l12 12M18 6 6 18"/>',
+    file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/>',
+    clip:'<path d="M21 8l-9.5 9.5a4 4 0 0 1-6-6L14 3.5a2.5 2.5 0 0 1 4 4L9 16"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    check:'<path d="M20 6 9 17l-5-5"/>',
+    alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>',
+  };
+  function icon(name, cls = 'ic-svg') {
+    return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+  }
+
   function money(n) {
     const v = Number(n || 0);
     return APP.currency + v.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -73,14 +91,7 @@ const App = (() => {
     return 'ok';
   }
 
-  function fileIcon(name) {
-    const e = (name || '').split('.').pop().toLowerCase();
-    if (e === 'pdf') return '📄';
-    if (['png','jpg','jpeg','gif','webp'].includes(e)) return '🖼️';
-    if (['xls','xlsx','csv'].includes(e)) return '📊';
-    if (['doc','docx'].includes(e)) return '📝';
-    return '📎';
-  }
+  function fileIcon(_name) { return icon('file'); }
   function fileSize(b) {
     b = Number(b || 0);
     if (b < 1024) return b + ' B';
@@ -96,7 +107,7 @@ const App = (() => {
     const box = document.getElementById('toasts');
     const el = document.createElement('div');
     el.className = 'toast ' + type;
-    const ic = type === 'ok' ? '✓' : type === 'err' ? '⚠' : 'ℹ';
+    const ic = icon(type === 'ok' ? 'check' : type === 'err' ? 'alert' : 'info');
     el.innerHTML = `<span class="ti">${ic}</span><div>${esc(msg)}</div>`;
     box.appendChild(el);
     setTimeout(() => { el.style.transition = '.3s'; el.style.opacity = '0'; el.style.transform = 'translateX(40px)';
@@ -176,6 +187,6 @@ const App = (() => {
   }
 
   return { api, uploadFile, esc, money, moneyShort, fmtDate, fmtMonth, daysLabel, urgency,
-           fileIcon, fileSize, badge, STATUS_LABEL, toast, openModal, closeModal, confirmDialog,
+           fileIcon, fileSize, badge, icon, STATUS_LABEL, toast, openModal, closeModal, confirmDialog,
            openDrawer, closeDrawer, register, show, start };
 })();

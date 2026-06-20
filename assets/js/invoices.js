@@ -73,16 +73,16 @@
        <div class="it"><b>${d.total ? App.money(d.sum / d.total) : App.money(0)}</b><span>Average</span></div>`;
 
     if (!d.invoices.length) {
-      body.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="big">🧾</div>No invoices match. <span class="dot-link" id="emptyAdd">Add one →</span></div></td></tr>`;
+      body.innerHTML = `<tr><td colspan="8"><div class="empty">No invoices match. <span class="dot-link" id="emptyAdd">Add one →</span></div></td></tr>`;
       document.getElementById('emptyAdd').onclick = () => openForm();
     } else {
       body.innerHTML = d.invoices.map(r => {
         const fileCell = r.file_count > 0
-          ? `<a class="btn sm ghost" href="api.php?action=file_download&type=invoice&id=${r.first_file_id}" target="_blank">👁 View${r.file_count>1?` (${r.file_count})`:''}</a>`
+          ? `<a class="btn sm ghost" href="api.php?action=file_download&type=invoice&id=${r.first_file_id}" target="_blank">${App.icon('view')} View${r.file_count>1?` (${r.file_count})`:''}</a>`
           : '<span class="muted">—</span>';
         const actions = r.can_edit
-          ? `<button class="btn icon sm ghost" title="Edit" data-edit="${r.id}">✎</button>
-             <button class="btn icon sm danger" title="Delete" data-del="${r.id}">🗑</button>` : '';
+          ? `<button class="btn icon sm ghost" title="Edit" data-edit="${r.id}">${App.icon('edit')}</button>
+             <button class="btn icon sm danger" title="Delete" data-del="${r.id}">${App.icon('trash')}</button>` : '';
         return `<tr>
           <td class="nowrap">${App.fmtDate(r.invoice_date)}</td>
           <td>${App.esc(r.vendor_name || '—')}</td>
@@ -164,7 +164,7 @@
   function renderFormFiles(files) {
     const list = (files && files.length)
       ? `<div class="files mt">${files.map(f => fileRow(f, 'invoice')).join('')}</div>` : '';
-    return list + `<div class="dropzone mt" data-drop>📎 Click or drop a file to attach (PDF, image, doc — max 15 MB)
+    return list + `<div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop a file to attach (PDF, image, doc — max 15 MB)
       <input type="file" hidden data-fileinput></div>`;
   }
   function fileRow(f, type) {
@@ -172,7 +172,7 @@
       <div class="fi">${App.fileIcon(f.original_name)}</div>
       <div class="fn"><b>${App.esc(f.original_name)}</b><span>${App.fileSize(f.size)}</span></div>
       <a class="btn sm ghost" href="api.php?action=file_download&type=${type}&id=${f.id}" target="_blank">View</a>
-      <button class="btn sm danger" data-rmfile="${f.id}" data-type="${type}">✕</button>
+      <button class="btn sm danger" data-rmfile="${f.id}" data-type="${type}">${App.icon('close')}</button>
     </div>`;
   }
 
@@ -189,7 +189,7 @@
       const docType = root.querySelector('#f_doctype'); if (docType) fd.append('doc_type', docType.value);
       dz.textContent = 'Uploading ' + file.name + '…';
       try { await App.uploadFile('file_upload', fd); App.toast('File attached', 'ok'); after(); }
-      catch (e) { App.toast(e.message, 'err'); dz.textContent = '📎 Click or drop a file to attach'; }
+      catch (e) { App.toast(e.message, 'err'); dz.textContent = 'Click or drop a file to attach'; }
     }
     root.querySelectorAll('[data-rmfile]').forEach(b => b.onclick = async () => {
       if (!await App.confirmDialog('Remove this file?', { okText: 'Remove' })) return;

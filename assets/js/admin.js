@@ -58,8 +58,8 @@
       <td>${u.role==='admin'?'<span class="badge b-approved">Admin</span>':'<span class="badge b-submitted">Member</span>'}</td>
       <td>${u.active==1?'<span class="badge b-paid">Active</span>':'<span class="badge b-rejected">Disabled</span>'}</td>
       <td><div class="row-actions">
-        <button class="btn icon sm ghost" data-edit="${u.id}" title="Edit">✎</button>
-        ${u.id!=APP.user.id?`<button class="btn icon sm danger" data-del="${u.id}" title="Delete">🗑</button>`:''}
+        <button class="btn icon sm ghost" data-edit="${u.id}" title="Edit">${App.icon('edit')}</button>
+        ${u.id!=APP.user.id?`<button class="btn icon sm danger" data-del="${u.id}" title="Delete">${App.icon('trash')}</button>`:''}
       </div></td></tr>`).join('');
     body.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => userForm(users.find(x => x.id == b.dataset.edit)));
     body.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {

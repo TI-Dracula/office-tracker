@@ -244,6 +244,12 @@ textarea:focus-visible,[tabindex]:focus-visible,.floor.active:focus-visible{
 .btn.icon{padding:8px;width:34px;height:34px}
 .btn.icon.sm{width:30px;height:30px;padding:6px}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.ic-svg{width:16px;height:16px;display:inline-block;vertical-align:-3px;flex:none}
+.btn .ic-svg{width:15px;height:15px;vertical-align:-2px}
+.btn.icon .ic-svg{width:16px;height:16px;vertical-align:middle}
+.brand .logo svg{width:20px;height:20px;display:block}
+.login .logo-lg svg{width:28px;height:28px;display:block}
+thead th.num{text-align:right}
 
 /* ============================================================
    Inputs
@@ -577,7 +583,6 @@ code{font-family:var(--font-mono);font-size:.88em;background:var(--bg-sunken);pa
   .stats{grid-template-columns:repeat(2,1fr)}
   .grid2{grid-template-columns:1fr}
   .formgrid{grid-template-columns:1fr}
-  .nav span.txt{display:none}
   .main{padding:20px 14px 64px}
   .topbar{padding:0 14px;gap:10px}
   .summary{gap:22px}

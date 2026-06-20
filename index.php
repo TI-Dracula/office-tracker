@@ -21,7 +21,7 @@ if (!$user):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/app.css">
-<script>try{if(localStorage.getItem('ibc-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<script>try{if(localStorage.getItem('ibc-theme')!=='dark')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head><body>
 <div class="login-wrap">
   <form class="login panel" id="loginForm">
@@ -58,7 +58,7 @@ f.addEventListener('submit',async e=>{
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/app.css">
-<script>try{if(localStorage.getItem('ibc-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<script>try{if(localStorage.getItem('ibc-theme')!=='dark')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head><body>
 <script>
 window.APP = {

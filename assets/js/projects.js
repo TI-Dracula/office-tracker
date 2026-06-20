@@ -208,7 +208,7 @@
     const docs = (p.files && p.files.length)
       ? `<div class="files">${p.files.map(f => `<div class="fileitem">
             <div class="fi">${App.fileIcon(f.original_name)}</div>
-            <div class="fn"><b>${App.esc(f.original_name)}</b><span>${App.esc(f.doc_type)} · ${App.fileSize(f.size)}</span></div>
+            <div class="fn"><b>${App.esc(f.doc_type||'Document')}</b><span>${App.fileSize(f.size)}</span></div>
             <a class="btn sm ghost" href="api.php?action=file_download&type=project&id=${f.id}" target="_blank">View</a>
             ${p.can_edit?`<button class="btn sm danger" data-rmfile="${f.id}" data-type="project">${App.icon('close')}</button>`:''}
           </div>`).join('')}</div>`

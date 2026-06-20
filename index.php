@@ -87,7 +87,7 @@ window.APP = {
     </nav>
     <div class="spacer"></div>
     <div class="usermenu">
-      <div class="meta right"><b><?= e($user['name']) ?></b><br><span><?= e(ucfirst($user['role'])) ?></span></div>
+      <div class="meta right"><b><?= e($user['name']) ?></b><?php if (is_admin()): ?><br><span><?= e(ucfirst($user['role'])) ?></span><?php endif; ?></div>
       <div class="avatar" id="profileBtn" title="My account" style="cursor:pointer"><?= e(strtoupper(substr($user['name'],0,1))) ?></div>
       <button class="btn ghost sm" id="themeToggle" title="Toggle light / dark theme"></button>
       <button class="btn ghost sm" id="logoutBtn" title="Sign out"><?= $svgLogout ?></button>

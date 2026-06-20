@@ -29,7 +29,7 @@ Built to last: **plain PHP 8 + MySQL**, no frameworks, no build step, no depende
 - Hashed passwords, session login, CSRF protection
 - Uploaded files live **outside the web root** and are streamed only to logged-in users — finance docs are never publicly reachable
 
-> **Note on AI auto-extraction:** it is intentionally **off**. Your Claude Max subscription cannot power a multi-user server (it's a personal, interactive plan). The code has a dormant hook for the paid Anthropic API — set `ai.enabled => true` and add a key in `config.php` later if you ever want it. Until then, invoice details are entered manually.
+> **Note on AI auto-extraction:** it is intentionally **off** — invoice details are entered manually. The code has a dormant hook for an optional AI provider's API; set `ai.enabled => true` and add a key in `config.php` later if you ever want automatic invoice reading.
 
 ---
 

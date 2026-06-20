@@ -27,14 +27,14 @@ return [
 
     /**
      * OPTIONAL — dormant by design. Manual invoice entry works without this.
-     * If you ever decide to pay for the Anthropic API (separate from your Max plan),
+     * If you ever decide to pay for an optional AI provider's API,
      * set enabled => true and paste a key here to turn on automatic invoice reading.
      * Leaving it off costs nothing.
      */
     'ai' => [
         'enabled' => false,
         'api_key' => '',
-        'model'   => 'claude-haiku-4-5-20251001',
+        'model'   => '',
     ],
 
     // Auto-generated random string used to sign sessions/CSRF. install.php fills this.

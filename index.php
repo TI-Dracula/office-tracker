@@ -208,7 +208,7 @@ window.APP = {
           <div class="field"><label class="lbl">Currency symbol</label><input id="setCurrency"></div>
         </div>
         <div class="mt2"><button class="btn primary" id="saveSettings">Save settings</button></div>
-        <p class="tiny muted mt2">Auto-extraction of invoices is currently <b>off</b> (manual entry). It can be switched on later in <code>config.php</code> if you ever add an Anthropic API key — no code changes needed.</p>
+        <p class="tiny muted mt2">Auto-extraction of invoices is currently <b>off</b> (manual entry). It can be switched on later in <code>config.php</code> if you ever add an AI provider API key — no code changes needed.</p>
       </div>
     </section>
     <?php endif; ?>

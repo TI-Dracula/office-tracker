@@ -78,7 +78,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     'name' => $app_name, 'currency' => 'INR', 'currency_symbol' => $currency,
                     'timezone' => 'Asia/Kolkata', 'max_upload_mb' => 15,
                 ],
-                'ai' => ['enabled' => false, 'api_key' => '', 'model' => 'claude-haiku-4-5-20251001'],
+                'ai' => ['enabled' => false, 'api_key' => '', 'model' => ''],
                 'secret' => bin2hex(random_bytes(32)),
             ];
             file_put_contents($CONFIG_FILE, "<?php\nreturn " . var_export($config, true) . ";\n");

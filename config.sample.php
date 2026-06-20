@@ -37,6 +37,17 @@ return [
         'model'   => '',
     ],
 
+    /**
+     * Outgoing email for account invitations. Works out of the box via PHP mail()
+     * on cPanel / InMotion. To send via SendGrid instead (better inbox delivery),
+     * paste an API key below — no code changes needed.
+     */
+    'mail' => [
+        'from'         => '',   // e.g. no-reply@moss.space  (defaults to no-reply@<your domain>)
+        'from_name'    => '',   // e.g. MOSS IT  (defaults to the app name)
+        'sendgrid_key' => '',   // SendGrid API key; leave blank to use PHP mail()
+    ],
+
     // Auto-generated random string used to sign sessions/CSRF. install.php fills this.
     'secret' => 'CHANGE_ME',
 ];

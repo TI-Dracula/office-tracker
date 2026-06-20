@@ -156,9 +156,9 @@ function h_settings_save(): void {
 }
 
 /**
- * Email a newly-created user their login details.
- * Uses PHP mail() (free on cPanel/InMotion). On a host without a mail server
- * (e.g. local XAMPP) it silently no-ops — it must never break user creation.
+ * Email a newly-created user a branded invitation with their login details.
+ * Delivery: SendGrid if a key is set in config.php (mail.sendgrid_key), else PHP mail()
+ * (works on cPanel / InMotion). Never throws — account creation must not depend on email.
  */
 function send_welcome_email(string $to, string $name, string $username, string $password): void {
     try {
@@ -167,23 +167,82 @@ function send_welcome_email(string $to, string $name, string $username, string $
         $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $base   = $scheme . '://' . $host . rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
         $loginUrl = $base . '/index.php';
+        $subject  = "You've been invited to $app";
 
-        $subject = "Your $app account";
-        $body =
+        $text =
             "Hi $name,\r\n\r\n" .
             "An account has been created for you on $app.\r\n\r\n" .
-            "Sign in here: $loginUrl\r\n" .
-            "Username: $username\r\n" .
-            "Temporary password: $password\r\n\r\n" .
-            "Please sign in and change your password right away from the account menu (your initial, top-right).\r\n\r\n" .
-            "— $app";
+            "Sign in: $loginUrl\r\nUsername: $username\r\nTemporary password: $password\r\n\r\n" .
+            "Please change your password after signing in (account menu, top-right).\r\n\r\n— $app";
 
-        $fromDomain = preg_replace('/^www\./', '', explode(':', $host)[0]) ?: 'localhost';
-        $from = (string) cfg('app.mail_from', 'no-reply@' . $fromDomain);
-        $headers = "From: $app <$from>\r\nReply-To: $from\r\nContent-Type: text/plain; charset=UTF-8\r\nX-Mailer: PHP";
+        $eApp = e($app); $eName = e($name); $eUser = e($username); $ePass = e($password); $eUrl = e($loginUrl);
+        $html = <<<HTML
+<!doctype html><html><body style="margin:0;padding:0;background:#0A1410;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0A1410;padding:32px 12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#0F1D17;border:1px solid rgba(199,161,90,.34);border-radius:14px;">
+<tr><td style="padding:30px 38px 0;font-family:Georgia,'Times New Roman',serif;font-size:19px;font-weight:bold;color:#F3EEDD;"><span style="color:#C7A15A;">&#9612;</span>&nbsp; $eApp</td></tr>
+<tr><td style="padding:22px 38px 0;">
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:27px;color:#F3EEDD;line-height:1.2;">You've been invited</div>
+<div style="font-size:15px;color:#C7CBBE;line-height:1.6;margin-top:12px;">Hi $eName, an account has been created for you on <b style="color:#F3EEDD;">$eApp</b>. Use the details below to sign in &mdash; then change your password.</div></td></tr>
+<tr><td style="padding:20px 38px 4px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#14271E;border:1px solid rgba(199,161,90,.34);border-radius:10px;"><tr><td style="padding:18px 22px;">
+<div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8C9588;">Username</div>
+<div style="font-family:'Courier New',monospace;font-size:16px;color:#F3EEDD;margin:5px 0 16px;">$eUser</div>
+<div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8C9588;">Temporary password</div>
+<div style="font-family:'Courier New',monospace;font-size:16px;color:#F3EEDD;margin:5px 0 0;">$ePass</div>
+</td></tr></table></td></tr>
+<tr><td style="padding:18px 38px 6px;"><a href="$eUrl" style="display:inline-block;background:#C7A15A;color:#0A1410;font-weight:bold;font-size:15px;text-decoration:none;padding:13px 30px;border-radius:8px;">Sign in &rarr;</a></td></tr>
+<tr><td style="padding:8px 38px 28px;font-size:12.5px;color:#8C9588;line-height:1.6;">For your security, please change this temporary password from your account menu right after you sign in.</td></tr>
+<tr><td style="padding:16px 38px;border-top:1px solid rgba(243,238,221,.08);font-size:12px;color:#8C9588;">$eApp &middot; Office operations</td></tr>
+</table></td></tr></table></body></html>
+HTML;
 
-        @mail($to, $subject, $body, $headers);
+        app_send_mail($to, $subject, $html, $text);
     } catch (Throwable $e) {
         // swallow — account creation must succeed regardless of mail delivery
+    }
+}
+
+/** Send an email via SendGrid (if mail.sendgrid_key is set) or PHP mail(). Never throws. */
+function app_send_mail(string $to, string $subject, string $html, string $text): void {
+    try {
+        $app   = (string) setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
+        $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $dom   = preg_replace('/^www\./', '', explode(':', $host)[0]) ?: 'localhost';
+        $from  = (string) (cfg('mail.from') ?: 'no-reply@' . $dom);
+        $fname = (string) (cfg('mail.from_name') ?: $app);
+        $key   = (string) cfg('mail.sendgrid_key', '');
+
+        if ($key !== '' && function_exists('curl_init')) {
+            $payload = json_encode([
+                'personalizations' => [['to' => [['email' => $to]]]],
+                'from'    => ['email' => $from, 'name' => $fname],
+                'subject' => $subject,
+                'content' => [
+                    ['type' => 'text/plain', 'value' => $text],
+                    ['type' => 'text/html',  'value' => $html],
+                ],
+            ]);
+            $ch = curl_init('https://api.sendgrid.com/v3/mail/send');
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => $payload,
+                CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $key, 'Content-Type: application/json'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 10,
+            ]);
+            curl_exec($ch);
+            curl_close($ch);
+            return;
+        }
+
+        $boundary = 'bd' . md5(uniqid('', true));
+        $headers  = "From: $fname <$from>\r\nReply-To: $from\r\nMIME-Version: 1.0\r\n" .
+                    "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\nX-Mailer: PHP";
+        $body = "--$boundary\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n$text\r\n\r\n" .
+                "--$boundary\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n$html\r\n\r\n--$boundary--";
+        @mail($to, $subject, $body, $headers);
+    } catch (Throwable $e) {
+        // swallow
     }
 }

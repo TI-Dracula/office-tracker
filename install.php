@@ -79,6 +79,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     'timezone' => 'Asia/Kolkata', 'max_upload_mb' => 15,
                 ],
                 'ai' => ['enabled' => false, 'api_key' => '', 'model' => ''],
+                'mail' => ['from' => '', 'from_name' => '', 'sendgrid_key' => ''],
                 'secret' => bin2hex(random_bytes(32)),
             ];
             file_put_contents($CONFIG_FILE, "<?php\nreturn " . var_export($config, true) . ";\n");

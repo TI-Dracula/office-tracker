@@ -82,7 +82,6 @@ window.APP = {
       <a data-view="pricing">IT Pricing</a>
       <?php if (is_admin()): ?>
       <a data-view="users">Users</a>
-      <a data-view="settings">Settings</a>
       <?php endif; ?>
     </nav>
     <div class="spacer"></div>
@@ -199,18 +198,6 @@ window.APP = {
       </table></div></div>
     </section>
 
-    <!-- SETTINGS (admin) -->
-    <section class="view" id="view-settings">
-      <div class="page-head"><div><h1>Settings</h1><div class="sub">General preferences</div></div></div>
-      <div class="panel panel-pad" style="max-width:520px">
-        <div class="formgrid">
-          <div class="field full"><label class="lbl">App name</label><input id="setAppName"></div>
-          <div class="field"><label class="lbl">Currency symbol</label><input id="setCurrency"></div>
-        </div>
-        <div class="mt2"><button class="btn primary" id="saveSettings">Save settings</button></div>
-        <p class="tiny muted mt2">Auto-extraction of invoices is currently <b>off</b> (manual entry). It can be switched on later in <code>config.php</code> if you ever add an AI provider API key — no code changes needed.</p>
-      </div>
-    </section>
     <?php endif; ?>
   </main>
 </div>

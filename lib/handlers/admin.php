@@ -90,6 +90,7 @@ function h_user_save(): void {
     $active = !empty($in['active']) ? 1 : 0;
 
     if (!$name || !$username) json_error('Name and username are required.', 422);
+    if ($email !== null && !filter_var($email, FILTER_VALIDATE_EMAIL)) json_error('Please enter a valid email address.', 422);
 
     if ($id > 0) {
         // Don't let the last admin demote/deactivate themselves into lockout
@@ -113,7 +114,12 @@ function h_user_save(): void {
         }
         log_activity('user_update', "User #$id");
     } else {
-        if (strlen($password) < 6) json_error('Password must be at least 6 characters.', 422);
+        if ($password === '') {
+            if (!$email) json_error('Set a password, or add an email address so we can send the login invite.', 422);
+            $password = generate_temp_password();
+        } elseif (strlen($password) < 6) {
+            json_error('Password must be at least 6 characters.', 422);
+        }
         try {
             $st = db()->prepare('INSERT INTO users (name, username, email, role, active, password_hash) VALUES (?,?,?,?,?,?)');
             $st->execute([$name, $username, $email, $role, $active, password_hash($password, PASSWORD_DEFAULT)]);
@@ -245,4 +251,13 @@ function app_send_mail(string $to, string $subject, string $html, string $text):
     } catch (Throwable $e) {
         // swallow
     }
+}
+
+/** Generate a readable random temporary password (no ambiguous 0/O/1/l characters). */
+function generate_temp_password(int $len = 12): string {
+    $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    $max = strlen($alphabet) - 1;
+    $out = '';
+    for ($i = 0; $i < $len; $i++) $out .= $alphabet[random_int(0, $max)];
+    return $out;
 }

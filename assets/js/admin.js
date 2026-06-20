@@ -79,17 +79,17 @@
         <div class="field"><label class="lbl">Role</label><select id="u_role">
           <option value="member" ${u?.role!=='admin'?'selected':''}>Member (add &amp; view)</option>
           <option value="admin" ${u?.role==='admin'?'selected':''}>Admin (full control)</option></select></div>
-        <div class="field"><label class="lbl">${u?'New password (leave blank to keep)':'Password'}</label><input id="u_pass" type="password"></div>
-        <div class="field"><label class="lbl">Status</label><select id="u_active">
-          <option value="1" ${(!u||u.active==1)?'selected':''}>Active</option>
-          <option value="0" ${u&&u.active==0?'selected':''}>Disabled</option></select></div>
+        <div class="field"><label class="lbl">${u?'New password (leave blank to keep)':'Password (leave blank to email an invite)'}</label><input id="u_pass" type="password"></div>
+        ${u?`<div class="field"><label class="lbl">Status</label><select id="u_active">
+          <option value="1" ${u.active==1?'selected':''}>Active</option>
+          <option value="0" ${u.active==0?'selected':''}>Disabled</option></select></div>`:''}
       </div>`,
       foot: `<button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="u_save">${u?'Save':'Create user'}</button>`
     });
     m.querySelector('#u_save').onclick = async () => {
       const body = { id: u?.id || 0, name: m.querySelector('#u_name').value, username: m.querySelector('#u_user').value,
         email: m.querySelector('#u_email').value, role: m.querySelector('#u_role').value,
-        password: m.querySelector('#u_pass').value, active: +m.querySelector('#u_active').value };
+        password: m.querySelector('#u_pass').value, active: u ? +m.querySelector('#u_active').value : 1 };
       try { await App.api('user_save', { method: 'POST', body }); App.toast('Saved', 'ok'); App.closeModal(); loadUsers(); }
       catch (e) { App.toast(e.message, 'err'); }
     };

@@ -142,7 +142,7 @@
         </div>` : `<div class="countdown"><div class="cd-lab">No handover date set</div></div>`;
       return `<div class="pcard panel" data-proj="${p.id}">
         <div class="top">
-          <div><div class="nm">${App.esc(p.name)}</div>${p.client?`<div class="cl">${App.esc(p.client)}</div>`:''}</div>
+          <div><div class="nm">${App.esc(p.name)}</div></div>
           ${App.badge(p.status)}
         </div>
         <div class="where">
@@ -174,7 +174,7 @@
       const actions = p.can_edit ? `<button class="btn icon sm ghost" data-edit="${p.id}" title="Edit">${App.icon('edit')}</button>
           <button class="btn icon sm danger" data-del="${p.id}" title="Delete">${App.icon('trash')}</button>` : '';
       return `<tr data-proj="${p.id}" style="cursor:pointer">
-        <td><b>${App.esc(p.name)}</b>${p.client?`<div class="tiny muted">${App.esc(p.client)}</div>`:''}</td>
+        <td><b>${App.esc(p.name)}</b></td>
         <td><span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span></td>
         <td class="tiny">${p.tower?'Tower '+App.esc(p.tower):'—'}${p.floor?' · Fl '+p.floor:''}</td>
         <td class="nowrap">${hd}</td>
@@ -252,7 +252,7 @@
           <div class="x" data-close>&times;</div>
         </div>
         <h2 style="margin:12px 0 4px;font-size:20px">${App.esc(p.name)}</h2>
-        <div class="flex" style="gap:8px">${App.badge(p.status)}${p.client?`<span class="muted tiny">${App.esc(p.client)}</span>`:''}</div>
+        <div class="flex" style="gap:8px">${App.badge(p.status)}</div>
       </div>
       <div class="drawer-body">
         ${cd}
@@ -261,7 +261,6 @@
           <span class="loc-chip">${App.esc(p.location_name||'—')}</span>
           ${p.tower?`<span class="loc-chip">Tower ${App.esc(p.tower)}</span>`:''}
           ${p.floor?`<span class="loc-chip">Floor ${p.floor}</span>`:''}
-          ${p.area_sqft?`<span class="loc-chip">${(+p.area_sqft).toLocaleString('en-IN')} sq.ft</span>`:''}
         </div>
         ${itScope}
         ${p.notes?`<div class="dlabel">Notes</div><div class="tiny" style="color:var(--ink-soft);white-space:pre-wrap">${App.esc(p.notes)}</div>`:''}
@@ -298,14 +297,12 @@
     const m = App.openModal({
       title: id ? 'Edit project' : 'Add project', wide: true,
       body: `<div class="formgrid">
-        <div class="field full"><label class="lbl">Project name</label><input id="p_name" value="${App.esc(p.name||'')}" placeholder="e.g. Acme Corp fit-out"></div>
+        <div class="field full"><label class="lbl">Client / company</label><input id="p_name" value="${App.esc(p.name||'')}" placeholder="e.g. Syndigo / Acme Corporation"></div>
         <div class="field"><label class="lbl">Location</label><select id="p_loc"><option value="">—</option>${locOpts}</select></div>
-        <div class="field"><label class="lbl">Client / company</label><input id="p_client" value="${App.esc(p.client||'')}"></div>
         <div class="field"><label class="lbl">Tower</label><input id="p_tower" value="${App.esc(p.tower||'')}" placeholder="A" list="towerlist"><datalist id="towerlist"></datalist></div>
         <div class="field"><label class="lbl">Floor</label><input id="p_floor" type="number" min="0" value="${p.floor??''}"></div>
         <div class="field"><label class="lbl">Handover date</label><input id="p_handover" type="date" value="${p.handover_date||''}"></div>
         <div class="field"><label class="lbl">Status</label><select id="p_status">${statusSel}</select></div>
-        <div class="field"><label class="lbl">Area (sq.ft)</label><input id="p_area" type="number" min="0" value="${p.area_sqft??''}"></div>
         <div class="field full"><label class="lbl">Notes</label><textarea id="p_notes">${App.esc(p.notes||'')}</textarea></div>
         <div class="fsec">Passive cabling</div>
         <div class="field"><label class="lbl">LAN points / workstation</label><input id="p_lan" type="number" min="0" value="${p.lan_per_ws??''}"></div>
@@ -345,11 +342,11 @@
 
     m.querySelector('#p_save').onclick = async () => {
       const name = m.querySelector('#p_name').value.trim();
-      if (!name) return App.toast('Project name is required.', 'err');
-      const payload = { id, name, location_id: m.querySelector('#p_loc').value, client: m.querySelector('#p_client').value,
+      if (!name) return App.toast('Client / company is required.', 'err');
+      const payload = { id, name, location_id: m.querySelector('#p_loc').value,
         tower: m.querySelector('#p_tower').value, floor: m.querySelector('#p_floor').value,
         handover_date: m.querySelector('#p_handover').value, status: m.querySelector('#p_status').value,
-        area_sqft: m.querySelector('#p_area').value, notes: m.querySelector('#p_notes').value,
+        notes: m.querySelector('#p_notes').value,
         lan_per_ws: m.querySelector('#p_lan').value, wireless_ap: m.querySelector('#p_ap').value,
         meeting_tv: m.querySelector('#p_tv').value, meeting_table: m.querySelector('#p_mtable').value,
         has_ll: m.querySelector('#p_ll').value, ll_primary: m.querySelector('#p_llp').value, ll_secondary: m.querySelector('#p_lls').value,

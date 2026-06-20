@@ -128,7 +128,7 @@ function h_project_save(): void {
     $id = (int)($in['id'] ?? 0);
 
     $name = clean($in['name'] ?? null);
-    if ($name === null) json_error('Project name is required.', 422);
+    if ($name === null) json_error('Client / company is required.', 422);
 
     $status = $in['status'] ?? 'open';
     if (!in_array($status, PROJECT_STATUSES, true)) $status = 'open';
@@ -140,8 +140,6 @@ function h_project_save(): void {
         'floor'         => ($f = clean($in['floor'] ?? null)) !== null ? (int)$f : null,
         'handover_date' => clean($in['handover_date'] ?? null),
         'status'        => $status,
-        'area_sqft'     => ($a = clean($in['area_sqft'] ?? null)) !== null ? (int)$a : null,
-        'client'        => clean($in['client'] ?? null),
         'notes'         => clean($in['notes'] ?? null),
         'lan_per_ws'    => ($v = clean($in['lan_per_ws'] ?? null)) !== null ? (int)$v : null,
         'wireless_ap'   => ($v = clean($in['wireless_ap'] ?? null)) !== null ? (int)$v : null,

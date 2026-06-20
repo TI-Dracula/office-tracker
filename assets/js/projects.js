@@ -216,32 +216,34 @@
 
     const uploader = p.can_edit ? `
       <div class="flex mt" style="gap:8px">
+        <label class="lbl" style="margin:0">Document type</label>
         <select id="f_doctype" style="max-width:150px"><option>LOI</option><option>Layout</option><option>Agreement</option><option>Quotation</option><option>Other</option></select>
       </div>
       <div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop to upload a document
         <input type="file" hidden data-fileinput></div>` : '';
 
-    const ynx = v => (v == 1 ? 'Yes' : 'No');
-    const nz = v => (v === null || v === undefined || v === '') ? '—' : v;
-    const itScope = `
-        <div class="dlabel">IT scope · Passive cabling</div>
-        <div class="flex" style="gap:8px;flex-wrap:wrap">
-          <span class="loc-chip">LAN / workstation: ${nz(p.lan_per_ws)}</span>
-          <span class="loc-chip">Wireless APs: ${nz(p.wireless_ap)}</span>
-          <span class="loc-chip">Meeting-room TVs: ${nz(p.meeting_tv)}</span>
-          <span class="loc-chip">Meeting-room tables: ${nz(p.meeting_table)}</span>
-        </div>
-        <div class="dlabel">Internet · Leased line</div>
-        <div class="flex" style="gap:8px;flex-wrap:wrap">
-          <span class="loc-chip">Leased line: ${ynx(p.has_ll)}</span>
-          ${p.has_ll==1?`<span class="loc-chip">Primary: ${App.esc(p.ll_primary||'—')}</span><span class="loc-chip">Secondary: ${App.esc(p.ll_secondary||'—')}</span>`:''}
-        </div>
-        <div class="dlabel">Access control · Spintly</div>
-        <div class="flex" style="gap:8px;flex-wrap:wrap">
-          <span class="loc-chip">Push doors: ${nz(p.spintly_push)}</span>
-          <span class="loc-chip">Pull doors: ${nz(p.spintly_pull)}</span>
-          <span class="loc-chip">Gateway on floor: ${ynx(p.spintly_gateway)}</span>
-        </div>`;
+    // Only surface IT-scope values that are actually set: positive numbers, real text,
+    // or a "Yes" boolean. Empty/0/No are omitted, and an empty section is hidden entirely.
+    const numv = v => { const n = Number(v); return (v !== null && v !== undefined && v !== '' && Number.isFinite(n) && n > 0) ? String(n) : null; };
+    const sChip = (label, val) => (val === null || val === undefined || val === '') ? '' : `<span class="loc-chip">${label}: ${App.esc(String(val))}</span>`;
+    const sBlock = (title, chips) => { const body = chips.filter(Boolean).join(''); return body ? `<div class="dlabel">${title}</div><div class="flex" style="gap:8px;flex-wrap:wrap">${body}</div>` : ''; };
+    const itScope =
+        sBlock('IT scope · Passive cabling', [
+          sChip('LAN / workstation', numv(p.lan_per_ws)),
+          sChip('Wireless APs', numv(p.wireless_ap)),
+          sChip('Meeting-room TVs', numv(p.meeting_tv)),
+          sChip('Meeting-room tables', numv(p.meeting_table)),
+        ])
+      + (p.has_ll == 1 ? sBlock('Internet · Leased line', [
+          sChip('Primary', p.ll_primary || null),
+          sChip('Secondary', p.ll_secondary || null),
+          (!p.ll_primary && !p.ll_secondary) ? '<span class="loc-chip">Required: Yes</span>' : '',
+        ]) : '')
+      + sBlock('Access control · Spintly', [
+          sChip('Push doors', numv(p.spintly_push)),
+          sChip('Pull doors', numv(p.spintly_pull)),
+          (p.spintly_gateway == 1 ? '<span class="loc-chip">Gateway on floor: Yes</span>' : ''),
+        ]);
 
     App.openDrawer(`
       <div class="drawer-head">

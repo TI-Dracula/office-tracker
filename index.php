@@ -12,8 +12,10 @@ if (!$user):
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($appName) ?> · Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/app.css">
+<script>try{if(localStorage.getItem('ibc-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head><body>
 <div class="login-wrap">
   <form class="login panel" id="loginForm">
@@ -47,8 +49,10 @@ f.addEventListener('submit',async e=>{
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($appName) ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/app.css">
+<script>try{if(localStorage.getItem('ibc-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head><body>
 <script>
 window.APP = {
@@ -77,6 +81,7 @@ window.APP = {
     <div class="usermenu">
       <div class="meta right"><b><?= e($user['name']) ?></b><br><span><?= e(ucfirst($user['role'])) ?></span></div>
       <div class="avatar"><?= e(strtoupper(substr($user['name'],0,1))) ?></div>
+      <button class="btn ghost sm" id="themeToggle" title="Toggle light / dark theme">☾</button>
       <button class="btn ghost sm" id="logoutBtn" title="Sign out">⎋</button>
     </div>
   </header>
@@ -214,4 +219,17 @@ window.APP = {
 <script src="assets/js/projects.js"></script>
 <?php if (is_admin()): ?><script src="assets/js/admin.js"></script><?php endif; ?>
 <script>App.start();</script>
+<script>
+(function(){
+  var b=document.getElementById('themeToggle'); if(!b) return;
+  function sync(){ b.textContent = document.documentElement.getAttribute('data-theme')==='light' ? '☀' : '☾'; }
+  sync();
+  b.onclick=function(){
+    var light = document.documentElement.getAttribute('data-theme')==='light';
+    if(light){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('ibc-theme','dark');}catch(e){} }
+    else     { document.documentElement.setAttribute('data-theme','light'); try{localStorage.setItem('ibc-theme','light');}catch(e){} }
+    sync();
+  };
+})();
+</script>
 </body></html>

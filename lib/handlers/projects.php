@@ -143,6 +143,16 @@ function h_project_save(): void {
         'area_sqft'     => ($a = clean($in['area_sqft'] ?? null)) !== null ? (int)$a : null,
         'client'        => clean($in['client'] ?? null),
         'notes'         => clean($in['notes'] ?? null),
+        'lan_per_ws'    => ($v = clean($in['lan_per_ws'] ?? null)) !== null ? (int)$v : null,
+        'wireless_ap'   => ($v = clean($in['wireless_ap'] ?? null)) !== null ? (int)$v : null,
+        'meeting_tv'    => ($v = clean($in['meeting_tv'] ?? null)) !== null ? (int)$v : null,
+        'meeting_table' => ($v = clean($in['meeting_table'] ?? null)) !== null ? (int)$v : null,
+        'has_ll'        => !empty($in['has_ll']) ? 1 : 0,
+        'll_primary'    => clean($in['ll_primary'] ?? null),
+        'll_secondary'  => clean($in['ll_secondary'] ?? null),
+        'spintly_push'  => ($v = clean($in['spintly_push'] ?? null)) !== null ? (int)$v : null,
+        'spintly_pull'  => ($v = clean($in['spintly_pull'] ?? null)) !== null ? (int)$v : null,
+        'spintly_gateway' => !empty($in['spintly_gateway']) ? 1 : 0,
     ];
 
     if ($id > 0) {

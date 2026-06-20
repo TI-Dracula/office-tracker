@@ -486,6 +486,7 @@ tr:hover .row-actions{opacity:1}
 .x:hover{color:var(--tx-primary);background:var(--bd-hairline)}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .formgrid .full{grid-column:1/-1}
+.fsec{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);font-weight:600;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--bd-hairline)}
 
 /* ============================================================
    Drawer

@@ -221,6 +221,28 @@
       <div class="dropzone mt" data-drop>${App.icon('clip')} Click or drop to upload a document
         <input type="file" hidden data-fileinput></div>` : '';
 
+    const ynx = v => (v == 1 ? 'Yes' : 'No');
+    const nz = v => (v === null || v === undefined || v === '') ? '—' : v;
+    const itScope = `
+        <div class="dlabel">IT scope · Passive cabling</div>
+        <div class="flex" style="gap:8px;flex-wrap:wrap">
+          <span class="loc-chip">LAN / workstation: ${nz(p.lan_per_ws)}</span>
+          <span class="loc-chip">Wireless APs: ${nz(p.wireless_ap)}</span>
+          <span class="loc-chip">Meeting-room TVs: ${nz(p.meeting_tv)}</span>
+          <span class="loc-chip">Meeting-room tables: ${nz(p.meeting_table)}</span>
+        </div>
+        <div class="dlabel">Internet · Leased line</div>
+        <div class="flex" style="gap:8px;flex-wrap:wrap">
+          <span class="loc-chip">Leased line: ${ynx(p.has_ll)}</span>
+          ${p.has_ll==1?`<span class="loc-chip">Primary: ${App.esc(p.ll_primary||'—')}</span><span class="loc-chip">Secondary: ${App.esc(p.ll_secondary||'—')}</span>`:''}
+        </div>
+        <div class="dlabel">Access control · Spintly</div>
+        <div class="flex" style="gap:8px;flex-wrap:wrap">
+          <span class="loc-chip">Push doors: ${nz(p.spintly_push)}</span>
+          <span class="loc-chip">Pull doors: ${nz(p.spintly_pull)}</span>
+          <span class="loc-chip">Gateway on floor: ${ynx(p.spintly_gateway)}</span>
+        </div>`;
+
     App.openDrawer(`
       <div class="drawer-head">
         <div class="flex" style="justify-content:space-between">
@@ -239,7 +261,7 @@
           ${p.floor?`<span class="loc-chip">Floor ${p.floor}</span>`:''}
           ${p.area_sqft?`<span class="loc-chip">${(+p.area_sqft).toLocaleString('en-IN')} sq.ft</span>`:''}
         </div>
-        ${p.location_maps?`<a class="tiny mt" style="display:inline-block" href="${App.esc(p.location_maps)}" target="_blank" rel="noopener">Open ${App.esc(p.location_code||'building')} in Google Maps</a>`:''}
+        ${itScope}
         ${p.notes?`<div class="dlabel">Notes</div><div class="tiny" style="color:var(--ink-soft);white-space:pre-wrap">${App.esc(p.notes)}</div>`:''}
         <div class="dlabel">Documents (LOI &amp; more)</div>
         <div id="dDocs">${docs}</div>
@@ -283,6 +305,20 @@
         <div class="field"><label class="lbl">Status</label><select id="p_status">${statusSel}</select></div>
         <div class="field"><label class="lbl">Area (sq.ft)</label><input id="p_area" type="number" min="0" value="${p.area_sqft??''}"></div>
         <div class="field full"><label class="lbl">Notes</label><textarea id="p_notes">${App.esc(p.notes||'')}</textarea></div>
+        <div class="fsec">Passive cabling</div>
+        <div class="field"><label class="lbl">LAN points / workstation</label><input id="p_lan" type="number" min="0" value="${p.lan_per_ws??''}"></div>
+        <div class="field"><label class="lbl">Wireless access points</label><input id="p_ap" type="number" min="0" value="${p.wireless_ap??''}"></div>
+        <div class="field"><label class="lbl">Meeting-room TVs</label><input id="p_tv" type="number" min="0" value="${p.meeting_tv??''}"></div>
+        <div class="field"><label class="lbl">Meeting-room tables</label><input id="p_mtable" type="number" min="0" value="${p.meeting_table??''}"></div>
+        <div class="fsec">Internet — leased line</div>
+        <div class="field"><label class="lbl">Leased line required?</label><select id="p_ll"><option value="0"${p.has_ll==1?'':' selected'}>No</option><option value="1"${p.has_ll==1?' selected':''}>Yes</option></select></div>
+        <div class="field"></div>
+        <div class="field"><label class="lbl">Primary LL</label><input id="p_llp" value="${App.esc(p.ll_primary||'')}" placeholder="e.g. 100 Mbps"></div>
+        <div class="field"><label class="lbl">Secondary LL</label><input id="p_lls" value="${App.esc(p.ll_secondary||'')}" placeholder="e.g. 50 Mbps"></div>
+        <div class="fsec">Access control — Spintly</div>
+        <div class="field"><label class="lbl">Push doors</label><input id="p_push" type="number" min="0" value="${p.spintly_push??''}"></div>
+        <div class="field"><label class="lbl">Pull doors</label><input id="p_pull" type="number" min="0" value="${p.spintly_pull??''}"></div>
+        <div class="field"><label class="lbl">Gateway already on floor?</label><select id="p_gw"><option value="0"${p.spintly_gateway==1?'':' selected'}>No</option><option value="1"${p.spintly_gateway==1?' selected':''}>Yes</option></select></div>
         <div class="field full"><label class="lbl">Documents</label><div id="f_files_p">${filesHtml}</div></div>
       </div>`,
       foot: `<button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="p_save">${id?'Save changes':'Add project'}</button>`
@@ -311,7 +347,11 @@
       const payload = { id, name, location_id: m.querySelector('#p_loc').value, client: m.querySelector('#p_client').value,
         tower: m.querySelector('#p_tower').value, floor: m.querySelector('#p_floor').value,
         handover_date: m.querySelector('#p_handover').value, status: m.querySelector('#p_status').value,
-        area_sqft: m.querySelector('#p_area').value, notes: m.querySelector('#p_notes').value };
+        area_sqft: m.querySelector('#p_area').value, notes: m.querySelector('#p_notes').value,
+        lan_per_ws: m.querySelector('#p_lan').value, wireless_ap: m.querySelector('#p_ap').value,
+        meeting_tv: m.querySelector('#p_tv').value, meeting_table: m.querySelector('#p_mtable').value,
+        has_ll: m.querySelector('#p_ll').value, ll_primary: m.querySelector('#p_llp').value, ll_secondary: m.querySelector('#p_lls').value,
+        spintly_push: m.querySelector('#p_push').value, spintly_pull: m.querySelector('#p_pull').value, spintly_gateway: m.querySelector('#p_gw').value };
       const btn = m.querySelector('#p_save'); btn.disabled = true; btn.textContent = 'Saving…';
       try {
         const r = await App.api('project_save', { method: 'POST', body: payload });

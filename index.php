@@ -163,7 +163,7 @@ window.APP = {
             <option value="open">Open</option><option value="in_progress">In progress</option>
             <option value="on_hold">On hold</option><option value="completed">Completed</option>
           </select>
-          <label class="flex tiny" style="gap:6px;color:var(--mut)"><input type="checkbox" id="prjOpenOnly" style="width:auto"> Open only</label>
+          <label class="flex tiny" style="gap:6px;color:var(--mut)"><input type="checkbox" id="prjOpenOnly"> Open only</label>
         </div>
       </div>
       <div id="prjBuildings" class="buildings"></div>

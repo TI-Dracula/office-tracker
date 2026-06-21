@@ -24,6 +24,7 @@
       document.getElementById(id).onchange = () => { state.page = 1; refresh(); });
     document.getElementById('invClear').onclick = () => {
       ['invSearch','invVendor','invStatus','invFrom','invTo'].forEach(id => document.getElementById(id).value = '');
+      ['invVendor','invStatus'].forEach(id => document.getElementById(id).dispatchEvent(new Event('csel:refresh')));
       state.page = 1; refresh();
     };
     document.getElementById('invExport').onclick = () => {

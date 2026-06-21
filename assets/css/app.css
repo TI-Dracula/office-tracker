@@ -287,6 +287,41 @@ select{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:point
 .cbx-add{color:var(--ac);font-weight:600;border-bottom:1px solid var(--bd-hairline);border-radius:0;margin-bottom:4px;padding-bottom:9px}
 .cbx-empty{padding:9px 11px;font-size:13px;color:var(--tx-muted)}
 
+/* Custom select — replaces the native <select> popup with a themed dropdown */
+.csel{position:relative;display:block;width:100%}
+.csel-native{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;border:0;
+  overflow:hidden;clip:rect(0 0 0 0);opacity:0;pointer-events:none}
+.csel-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+  padding:10px 12px;background:var(--bg-raised-2);border:1px solid var(--bd-strong);border-radius:var(--r-sm);
+  color:var(--tx-primary);font-size:14px;font-family:var(--font-ui);text-align:left;cursor:pointer;
+  transition:border-color .15s var(--ease-standard),box-shadow .15s var(--ease-standard)}
+.csel-trigger:hover{border-color:var(--ac-line)}
+.csel-trigger.open,.csel-trigger:focus-visible{outline:none;border-color:var(--ac-line);box-shadow:var(--e-focus)}
+.csel-val{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-chev{width:16px;height:16px;flex:none;color:var(--tx-muted);transition:transform .15s var(--ease-standard)}
+.csel-trigger.open .csel-chev{transform:rotate(180deg)}
+.csel-panel{position:absolute;top:calc(100% + 5px);left:0;z-index:130;display:none;
+  min-width:100%;width:max-content;max-width:min(340px,86vw);max-height:262px;overflow-y:auto;padding:5px;
+  background:var(--bg-overlay);border:1px solid var(--bd-strong);border-radius:var(--r-md);box-shadow:var(--e3)}
+.csel-panel.up{top:auto;bottom:calc(100% + 5px)}
+.csel-panel.show{display:block}
+.csel-opt{padding:9px 11px;border-radius:var(--r-sm);font-size:13.5px;color:var(--tx-secondary);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .1s,color .1s}
+.csel-opt:hover{background:var(--ac-tint);color:var(--tx-primary)}
+.csel-opt.sel{color:var(--tx-primary);font-weight:600;background:var(--ac-tint)}
+.filters .csel{width:auto;min-width:140px}
+.filters .csel-trigger{padding:8px 11px;font-size:13px}
+
+/* Custom checkbox — no default control styling */
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:17px;height:17px;flex:none;margin:0;padding:0;
+  border:1px solid var(--bd-strong);border-radius:var(--r-xs);background:var(--bg-raised-2);cursor:pointer;
+  position:relative;transition:background .12s,border-color .12s}
+input[type=checkbox]:hover{border-color:var(--ac-line)}
+input[type=checkbox]:checked{background:var(--ac);border-color:var(--ac)}
+input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:2px;width:4px;height:8px;
+  border:solid var(--tx-on-gold);border-width:0 2px 2px 0;transform:rotate(45deg)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+
 /* ============================================================
    Toolbar / filters
    ============================================================ */
@@ -296,7 +331,7 @@ select{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:point
 .search input{padding-left:38px}
 .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tx-muted);width:16px;height:16px}
 .filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
-.filters select,.filters input{width:auto;min-width:120px;padding:8px 11px;font-size:13px}
+.filters select,.filters input:not([type=checkbox]){width:auto;min-width:120px;padding:8px 11px;font-size:13px}
 .filters select{padding-right:30px;background-position:right 9px center}
 
 /* ============================================================
@@ -483,10 +518,12 @@ tr:hover .row-actions{opacity:1}
 .floor.soon::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   box-shadow:0 0 16px 1px var(--ac-glow);opacity:0;animation:pulse 2.4s var(--ease-standard) infinite}
 @keyframes pulse{0%,100%{opacity:0}50%{opacity:.9}}
-.floor .ft{position:absolute;left:54px;top:50%;transform:translateY(-50%);background:var(--bg-overlay);
-  border:1px solid var(--bd-strong);padding:8px 11px;border-radius:var(--r-md);white-space:nowrap;font-size:11.5px;
-  color:var(--tx-primary);opacity:0;pointer-events:none;transition:opacity .15s;z-index:10;box-shadow:var(--e3);font-weight:500}
-.floor.active:hover .ft{opacity:1}
+/* Floor tooltip — rendered at body level & positioned in viewport coords (JS), so it
+   never gets clipped by the building card's overflow or pushed off-screen at the edge. */
+.floortip{position:fixed;z-index:1000;background:var(--bg-overlay);border:1px solid var(--bd-strong);
+  padding:8px 11px;border-radius:var(--r-md);white-space:pre;font-size:11.5px;color:var(--tx-primary);
+  box-shadow:var(--e3);font-weight:500;opacity:0;pointer-events:none;transition:opacity .14s var(--ease-standard)}
+.floortip.show{opacity:1}
 .blegend{display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--bd-hairline);
   font-size:10.5px;color:var(--tx-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;position:relative}
 .blegend .k{display:flex;align-items:center;gap:7px}

@@ -198,6 +198,74 @@ const App = (() => {
     });
   }
 
+  /* ---------- Custom select — replaces the native <select> popup with a themed dropdown ---------- */
+  const SELECT_CHEVRON = '<svg class="csel-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  function select(sel) {
+    if (!sel || sel.dataset.cstyled) return;
+    sel.dataset.cstyled = '1';
+    sel.tabIndex = -1;
+    sel.setAttribute('aria-hidden', 'true');
+    const wrap = document.createElement('div');
+    wrap.className = 'csel';
+    ['width', 'minWidth', 'maxWidth'].forEach(p => { if (sel.style[p]) wrap.style[p] = sel.style[p]; });
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+    sel.classList.add('csel-native');
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'csel-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    const panel = document.createElement('div');
+    panel.className = 'csel-panel';
+    panel.setAttribute('role', 'listbox');
+    wrap.appendChild(trigger);
+    wrap.appendChild(panel);
+
+    const renderTrigger = () => {
+      const o = sel.options[sel.selectedIndex];
+      trigger.innerHTML = `<span class="csel-val">${esc(o ? o.textContent : '')}</span>${SELECT_CHEVRON}`;
+    };
+    const renderPanel = () => {
+      panel.innerHTML = [...sel.options].map((o, i) =>
+        `<div class="csel-opt${i === sel.selectedIndex ? ' sel' : ''}" role="option" data-i="${i}">${esc(o.textContent)}</div>`
+      ).join('');
+    };
+    const close = () => { panel.classList.remove('show'); trigger.classList.remove('open'); };
+    const open = () => {
+      renderPanel();
+      panel.classList.remove('up');
+      panel.classList.add('show');
+      trigger.classList.add('open');
+      const r = trigger.getBoundingClientRect();          // flip up if it would overflow the viewport bottom
+      if (r.bottom + panel.offsetHeight + 12 > window.innerHeight && r.top - panel.offsetHeight > 12) panel.classList.add('up');
+      const cur = panel.querySelector('.csel-opt.sel');
+      if (cur) cur.scrollIntoView({ block: 'nearest' });
+    };
+    const choose = i => {
+      if (i < 0 || i >= sel.options.length) return;
+      if (i !== sel.selectedIndex) { sel.selectedIndex = i; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+      renderTrigger();
+      close();
+    };
+
+    trigger.addEventListener('click', e => { e.preventDefault(); panel.classList.contains('show') ? close() : open(); });
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); choose(Math.min(sel.options.length - 1, sel.selectedIndex + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); choose(Math.max(0, sel.selectedIndex - 1)); }
+      else if (e.key === 'Escape') close();
+    });
+    panel.addEventListener('mousedown', e => {
+      const opt = e.target.closest('[data-i]');
+      if (!opt) return;
+      e.preventDefault();
+      choose(+opt.dataset.i);
+    });
+    sel.addEventListener('change', renderTrigger);
+    sel.addEventListener('csel:refresh', renderTrigger);   // re-sync trigger after a programmatic value change
+    renderTrigger();
+  }
+  function enhanceSelects(root) { (root || document).querySelectorAll('select:not([data-cstyled])').forEach(select); }
+
   /* ---------- Router ---------- */
   function register(view, fn) { loaders[view] = fn; }
   function show(view) {
@@ -222,11 +290,24 @@ const App = (() => {
       if (document.getElementById('overlay').classList.contains('show')) closeModal();
       else if (document.getElementById('drawer').classList.contains('show')) closeDrawer();
     });
+    enhanceSelects();
+    new MutationObserver(ms => {
+      for (const m of ms) for (const n of m.addedNodes) {
+        if (n.nodeType !== 1) continue;
+        if (n.tagName === 'SELECT') select(n);
+        else if (n.querySelectorAll) enhanceSelects(n);
+      }
+    }).observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('mousedown', e => {
+      document.querySelectorAll('.csel-trigger.open').forEach(t => {
+        if (!t.parentNode.contains(e.target)) { t.classList.remove('open'); t.nextElementSibling.classList.remove('show'); }
+      });
+    });
     const initial = (location.hash || '#dashboard').slice(1);
     show(initial);
   }
 
   return { api, uploadFile, esc, money, moneyShort, fmtDate, fmtMonth, daysLabel, urgency,
            fileIcon, fileSize, badge, icon, STATUS_LABEL, toast, openModal, closeModal, confirmDialog,
-           openDrawer, closeDrawer, combobox, register, show, start };
+           openDrawer, closeDrawer, combobox, select, enhanceSelects, register, show, start };
 })();

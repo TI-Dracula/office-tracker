@@ -61,6 +61,28 @@
     else renderTable();
   }
 
+  /* ---------- Floor tooltip (body-level, viewport-positioned, never clipped) ---------- */
+  let floorTip = null;
+  function ensureFloorTip() {
+    if (!floorTip) { floorTip = document.createElement('div'); floorTip.className = 'floortip'; document.body.appendChild(floorTip); }
+    return floorTip;
+  }
+  function showFloorTip(floor) {
+    const tip = floor.getAttribute('data-tip'); if (!tip) return;
+    const el = ensureFloorTip();
+    el.textContent = tip;
+    el.classList.add('show'); el.style.opacity = '0';                  // render hidden to measure
+    const fr = floor.getBoundingClientRect();
+    const w = el.offsetWidth, h = el.offsetHeight, gap = 10;
+    let left = fr.right + gap;
+    if (left + w > window.innerWidth - 8) left = fr.left - gap - w;     // flip left when no room on the right
+    left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+    let top = fr.top + fr.height / 2 - h / 2;
+    top = Math.max(8, Math.min(top, window.innerHeight - h - 8));
+    el.style.left = left + 'px'; el.style.top = top + 'px'; el.style.opacity = '';
+  }
+  function hideFloorTip() { if (floorTip) floorTip.classList.remove('show'); }
+
   /* ---------- BUILDING BARS ---------- */
   function renderBuildings() {
     const wrap = document.getElementById('prjBuildings');
@@ -90,11 +112,10 @@
           if (isActive) activeCount += active.length;
           const soon = active.some(p => p.days_left !== null && p.days_left >= 0 && p.days_left <= 30);
           const tip = isActive
-            ? active.map(p => `${App.esc(p.name)} · ${p.handover_date ? App.daysLabel(p.days_left) : 'no date'}`).join('<br>')
+            ? active.map(p => `${App.esc(p.name)} · ${p.handover_date ? App.daysLabel(p.days_left) : 'no date'}`).join('\n')
             : '';
           cells += `<div class="floor ${isActive ? 'active' : ''} ${soon ? 'soon' : ''}"
-                      ${isActive ? `data-proj="${active[0].id}"` : ''} style="--bcol:${App.esc(loc.color)}">
-                      ${isActive ? fl : ''}${tip ? `<div class="ft">${tip}</div>` : ''}</div>`;
+                      ${isActive ? `data-proj="${active[0].id}"` : ''}${tip ? ` data-tip="${tip}"` : ''} style="--bcol:${App.esc(loc.color)}">${isActive ? fl : ''}</div>`;
         }
         return `<div class="tower"><div class="tstack">${cells}</div><div class="tlabel">${App.esc(t)}</div></div>`;
       }).join('');
@@ -123,6 +144,8 @@
     }).join('') || '<div class="panel empty">No buildings configured.</div>';
 
     wrap.querySelectorAll('[data-proj]').forEach(el => el.onclick = () => openDrawer(+el.dataset.proj));
+    wrap.onmouseover = e => { const f = e.target.closest('.floor.active'); if (f && wrap.contains(f)) showFloorTip(f); };
+    wrap.onmouseout  = e => { if (e.target.closest('.floor.active')) hideFloorTip(); };
   }
 
   /* ---------- CARDS ---------- */

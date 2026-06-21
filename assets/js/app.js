@@ -266,6 +266,96 @@ const App = (() => {
   }
   function enhanceSelects(root) { (root || document).querySelectorAll('select:not([data-cstyled])').forEach(select); }
 
+  /* ---------- Custom date picker — replaces the native date input + OS calendar ---------- */
+  const DP_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DP_DOW = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const DP_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DP_ICON = '<svg class="dpick-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>';
+  function datepicker(input) {
+    if (!input || input.dataset.dpicker) return;
+    input.dataset.dpicker = '1';
+    const ph = input.getAttribute('placeholder') || input.getAttribute('title') || 'Select date';
+    const wrap = document.createElement('div');
+    wrap.className = 'dpick';
+    ['width', 'minWidth', 'maxWidth'].forEach(p => { if (input.style[p]) wrap.style[p] = input.style[p]; });
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    input.type = 'hidden';
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'dpick-trigger';
+    const panel = document.createElement('div');
+    panel.className = 'dpick-panel';
+    wrap.appendChild(trigger);
+    wrap.appendChild(panel);
+
+    const pad = n => String(n).padStart(2, '0');
+    const fmt = v => { const p = (v || '').split('-'); return p.length === 3 ? `${+p[2]} ${DP_SHORT[+p[1] - 1]} ${p[0]}` : ''; };
+    const parts = () => { const p = (input.value || '').split('-'); return p.length === 3 ? p.map(Number) : null; };
+    let view = { y: 0, m: 0 };
+
+    const renderTrigger = () => {
+      const v = input.value;
+      trigger.innerHTML = `<span class="dpick-val${v ? '' : ' ph'}">${v ? esc(fmt(v)) : esc(ph)}</span>${DP_ICON}`;
+    };
+    const build = () => {
+      const sel = parts(), now = new Date();
+      const tY = now.getFullYear(), tM = now.getMonth(), tD = now.getDate();
+      const firstDow = new Date(view.y, view.m, 1).getDay();
+      const days = new Date(view.y, view.m + 1, 0).getDate();
+      let cells = '';
+      for (let i = 0; i < firstDow; i++) cells += '<span class="dpick-day blank"></span>';
+      for (let d = 1; d <= days; d++) {
+        const isSel = sel && sel[0] === view.y && sel[1] - 1 === view.m && sel[2] === d;
+        const isToday = view.y === tY && view.m === tM && d === tD;
+        cells += `<button type="button" class="dpick-day${isSel ? ' sel' : ''}${isToday ? ' today' : ''}" data-d="${d}">${d}</button>`;
+      }
+      panel.innerHTML = `<div class="dpick-head">
+          <button type="button" class="dpick-nav" data-nav="-1" aria-label="Previous month">&lsaquo;</button>
+          <div class="dpick-mo">${DP_MONTHS[view.m]} ${view.y}</div>
+          <button type="button" class="dpick-nav" data-nav="1" aria-label="Next month">&rsaquo;</button>
+        </div>
+        <div class="dpick-dow">${DP_DOW.map(d => `<span>${d}</span>`).join('')}</div>
+        <div class="dpick-grid">${cells}</div>
+        <div class="dpick-foot">
+          <button type="button" class="dpick-act" data-act="today">Today</button>
+          <button type="button" class="dpick-act" data-act="clear">Clear</button>
+        </div>`;
+    };
+    const close = () => { panel.classList.remove('show'); trigger.classList.remove('open'); };
+    const open = () => {
+      const p = parts(), now = new Date();
+      view = { y: p ? p[0] : now.getFullYear(), m: p ? p[1] - 1 : now.getMonth() };
+      build();
+      panel.classList.add('show'); trigger.classList.add('open');
+      const r = trigger.getBoundingClientRect();
+      panel.classList.toggle('up', r.bottom + panel.offsetHeight + 12 > window.innerHeight && r.top - panel.offsetHeight > 12);
+    };
+    const commit = v => { input.value = v; input.dispatchEvent(new Event('change', { bubbles: true })); renderTrigger(); close(); };
+
+    trigger.addEventListener('click', e => { e.preventDefault(); panel.classList.contains('show') ? close() : open(); });
+    trigger.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    panel.addEventListener('mousedown', e => {
+      const nav = e.target.closest('[data-nav]'), day = e.target.closest('[data-d]'), act = e.target.closest('[data-act]');
+      if (nav) { e.preventDefault(); view.m += +nav.dataset.nav; if (view.m < 0) { view.m = 11; view.y--; } if (view.m > 11) { view.m = 0; view.y++; } build(); }
+      else if (day) { e.preventDefault(); commit(`${view.y}-${pad(view.m + 1)}-${pad(+day.dataset.d)}`); }
+      else if (act) { e.preventDefault(); if (act.dataset.act === 'clear') commit(''); else { const n = new Date(); commit(`${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`); } }
+    });
+    input.addEventListener('csel:refresh', renderTrigger);   // reuse the sync event (Clear etc.)
+    renderTrigger();
+  }
+
+  /* enhance any select + date input, now and as the DOM changes */
+  function enhanceAll(root) {
+    if (!root || root.nodeType !== 1) return;
+    if (root.tagName === 'SELECT') select(root);
+    else if (root.matches && root.matches('input[type="date"]')) datepicker(root);
+    if (root.querySelectorAll) {
+      root.querySelectorAll('select:not([data-cstyled])').forEach(select);
+      root.querySelectorAll('input[type="date"]:not([data-dpicker])').forEach(datepicker);
+    }
+  }
+
   /* ---------- Router ---------- */
   function register(view, fn) { loaders[view] = fn; }
   function show(view) {
@@ -290,16 +380,12 @@ const App = (() => {
       if (document.getElementById('overlay').classList.contains('show')) closeModal();
       else if (document.getElementById('drawer').classList.contains('show')) closeDrawer();
     });
-    enhanceSelects();
+    enhanceAll(document.body);
     new MutationObserver(ms => {
-      for (const m of ms) for (const n of m.addedNodes) {
-        if (n.nodeType !== 1) continue;
-        if (n.tagName === 'SELECT') select(n);
-        else if (n.querySelectorAll) enhanceSelects(n);
-      }
+      for (const m of ms) for (const n of m.addedNodes) enhanceAll(n);
     }).observe(document.body, { childList: true, subtree: true });
     document.addEventListener('mousedown', e => {
-      document.querySelectorAll('.csel-trigger.open').forEach(t => {
+      document.querySelectorAll('.csel-trigger.open, .dpick-trigger.open').forEach(t => {
         if (!t.parentNode.contains(e.target)) { t.classList.remove('open'); t.nextElementSibling.classList.remove('show'); }
       });
     });
@@ -309,5 +395,5 @@ const App = (() => {
 
   return { api, uploadFile, esc, money, moneyShort, fmtDate, fmtMonth, daysLabel, urgency,
            fileIcon, fileSize, badge, icon, STATUS_LABEL, toast, openModal, closeModal, confirmDialog,
-           openDrawer, closeDrawer, combobox, select, enhanceSelects, register, show, start };
+           openDrawer, closeDrawer, combobox, select, enhanceSelects, datepicker, enhanceAll, register, show, start };
 })();

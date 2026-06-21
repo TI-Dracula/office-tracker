@@ -193,7 +193,7 @@ window.APP = {
       <div class="page-head"><div><h1>Users</h1><div class="sub">Who can access this tool</div></div>
         <button class="btn primary" id="addUserBtn"><?= $svgPlus ?> Add user</button></div>
       <div class="panel"><div class="tablewrap"><table>
-        <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
         <tbody id="usersBody"></tbody>
       </table></div></div>
     </section>

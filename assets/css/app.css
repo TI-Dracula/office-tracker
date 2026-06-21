@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&display=swap');
+/* Fonts are loaded via <link rel="preconnect"> + stylesheet in the page <head>
+   (both login & app shell) — no render-blocking @import here. */
 /* ============================================================
    MOSS Operations — "SOVEREIGN"
    Old-money, reborn digital. Forest green + antique gold.
@@ -64,6 +65,9 @@
   --ease-out:cubic-bezier(.16,1,.3,1);
   --ease-inout:cubic-bezier(.65,0,.35,1);
   --ease-standard:cubic-bezier(.4,0,.2,1);
+
+  /* ---- Motion scale — one timing vocabulary for the whole app ---- */
+  --t-instant:90ms; --t-quick:150ms; --t-smooth:240ms; --t-enter:320ms;
 
   /* ---- Legacy aliases (referenced by inline styles in JS — DO NOT rename) ---- */
   --ink:var(--tx-primary);
@@ -228,7 +232,7 @@ textarea:focus-visible,[tabindex]:focus-visible,.floor.active:focus-visible{
   transition:background .15s var(--ease-standard),border-color .15s var(--ease-standard),transform .12s var(--ease-standard),color .15s
 }
 .btn:hover{background:var(--bg-overlay);border-color:var(--bd-gold-hair);transform:translateY(-1px)}
-.btn:active{transform:none}
+.btn:active{transform:translateY(0) scale(.985);transition-duration:var(--t-instant)}
 .btn.primary{
   background:linear-gradient(180deg,var(--ac-hover),var(--ac));border:1px solid var(--ac-press);
   color:var(--tx-on-gold);font-weight:600;box-shadow:var(--e1),0 0 0 0 var(--ac-glow)
@@ -361,13 +365,13 @@ thead th.sortable:hover{color:var(--tx-secondary)}
 thead th .arr{margin-left:5px;font-size:9px;color:var(--ac);display:inline-block}
 thead th.sorted{color:var(--tx-primary)}
 tbody td{padding:11px 14px;border-bottom:1px solid var(--bd-hairline);vertical-align:middle;color:var(--tx-secondary)}
-tbody tr{transition:background .12s var(--ease-standard)}
-tbody tr:hover{background:var(--bg-raised-2)}
+tbody tr{box-shadow:inset 2px 0 0 transparent;transition:background-color var(--t-quick) var(--ease-out),box-shadow var(--t-quick) var(--ease-out)}
+tbody tr:hover{background:var(--bg-raised-2);box-shadow:inset 2px 0 0 0 var(--ac-line)}
 tbody tr:last-child td{border-bottom:0}
 td.num{text-align:right;font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--tx-primary)}
 td b{color:var(--tx-primary);font-weight:600}
-.row-actions{display:flex;gap:6px;justify-content:flex-end;opacity:0;transition:opacity .15s var(--ease-standard)}
-tr:hover .row-actions{opacity:1}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;opacity:0;transform:translateX(4px);pointer-events:none;transition:opacity var(--t-quick) var(--ease-out),transform var(--t-quick) var(--ease-out)}
+tr:hover .row-actions,tr:focus-within .row-actions{opacity:1;transform:none;pointer-events:auto}
 .empty{padding:54px 20px;text-align:center;color:var(--tx-muted);font-family:var(--font-display);font-style:italic;font-size:15px}
 .empty .big{font-size:34px;margin-bottom:10px;opacity:.5;font-style:normal}
 
@@ -439,7 +443,7 @@ tr:hover .row-actions{opacity:1}
   font-family:var(--font-ui);font-weight:500;font-size:13px;border-radius:var(--r-pill);cursor:pointer;
   transition:color .2s var(--ease-standard),background .2s var(--ease-standard)}
 .subtabs button:hover{color:var(--tx-primary)}
-.subtabs button.active{background:var(--bg-raised-2);color:var(--tx-primary);box-shadow:var(--e1)}
+.subtabs button.active{background:var(--bg-raised-2);color:var(--ac);box-shadow:var(--e1),inset 0 0 0 1px var(--ac-line)}
 
 /* ============================================================
    BUILDINGS — the centerpiece
@@ -670,6 +674,60 @@ tr:hover .row-actions{opacity:1}
 .dot-link{cursor:pointer;color:var(--ac);font-weight:500}
 .dot-link:hover{color:var(--ac-hover);text-decoration:underline}
 code{font-family:var(--font-mono);font-size:.88em;background:var(--bg-sunken);padding:2px 6px;border-radius:var(--r-xs);border:1px solid var(--bd-hairline);color:var(--tx-primary)}
+
+/* ============================================================
+   PREMIUM INTERACTION POLISH
+   ============================================================ */
+html{scroll-behavior:smooth}
+
+/* press feedback + tactile subtab switch */
+.nav a:active{transform:scale(.99)}
+.subtabs button{transition:background-color var(--t-smooth) var(--ease-out),color var(--t-instant) var(--ease-out),box-shadow var(--t-smooth) var(--ease-out),transform var(--t-instant) var(--ease-out)}
+.subtabs button:active{transform:scale(.97)}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes tabSettle{from{transform:translateY(1px);opacity:.7}}
+  .subtabs button.active{animation:tabSettle var(--t-smooth) var(--ease-out)}
+}
+
+/* unified keyboard focus ring — focus-visible only, so mouse clicks stay ringless */
+.nav a:focus,.btn:focus,.subtabs button:focus,thead th.sortable:focus,.x:focus{outline:none}
+.nav a:focus-visible,.btn:focus-visible,.subtabs button:focus-visible,thead th.sortable:focus-visible,.x:focus-visible{
+  outline:none;border-radius:var(--r-sm);box-shadow:0 0 0 1px var(--ac-line),var(--e-focus)}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes focusBloom{from{box-shadow:0 0 0 1px var(--ac-line),0 0 0 var(--ac-glow)}}
+  .btn:focus-visible,.nav a:focus-visible,.subtabs button:focus-visible{animation:focusBloom var(--t-smooth) var(--ease-out)}
+}
+
+/* big display numerals stay column-aligned (no jitter on refresh) */
+.stat .val,.bmeta b,.countdown .days{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* Pricing rate-card — lead the eye to the gold Total, zero layout thrash */
+.ratecard{font-variant-numeric:tabular-nums}
+.ratecard th:last-child{color:var(--ac)}
+.ratecard tbody td:last-child{background:var(--ac-tint);box-shadow:inset 1px 0 0 var(--bd-gold-hair)}
+.ratecard tbody td:last-child b{font-size:14.5px;letter-spacing:-.01em;color:var(--ac)}
+.ratecard td:first-child,.ratecard th:first-child{padding-left:16px}
+.ratecard td:last-child,.ratecard th:last-child{padding-right:18px}
+.ratecard tbody tr{box-shadow:inset 3px 0 0 transparent;transition:background-color var(--t-quick) var(--ease-out),box-shadow var(--t-quick) var(--ease-out)}
+.ratecard tbody tr:hover{background:var(--bg-raised-2);box-shadow:inset 3px 0 0 0 var(--ac)}
+.ratecard tbody tr:hover td:last-child{background:color-mix(in oklab,var(--ac-tint),var(--ac) 9%)}
+
+/* Users — identity cell: monogram avatar + name over @handle */
+.u-id{display:flex;align-items:center;gap:12px;min-width:0}
+.u-av{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;
+  font:600 12.5px/1 var(--font-ui);letter-spacing:.02em;color:var(--ac);background:var(--ac-tint);
+  border:1px solid var(--bd-gold-hair);transition:border-color var(--t-quick) var(--ease-out)}
+.u-id-tx{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.u-id-tx b{color:var(--tx-primary);font-weight:600}
+.u-handle{font-family:var(--font-mono);font-size:11.5px;color:var(--tx-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tbody tr:hover .u-av{border-color:var(--ac-line)}
+
+/* reduced-motion backstop — kill positional motion, keep colour/opacity cues */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .btn:hover,.stat:hover,.pcard:hover,.nav a:hover,tbody tr:hover,.floor.active:hover{transform:none!important}
+}
 
 /* ============================================================
    Responsive

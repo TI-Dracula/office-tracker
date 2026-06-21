@@ -31,8 +31,8 @@
 
   function card(title, sub, rows) {
     return `<div class="panel" style="margin-bottom:18px">
-      <div class="panel-pad" style="padding-bottom:6px"><div class="card-title">${App.esc(title)}<span class="pill">${App.esc(sub)}</span></div></div>
-      <div class="tablewrap"><table>
+      <div class="panel-pad" style="padding-bottom:6px"><div class="card-title">${App.esc(title)}${sub ? `<span class="pill">${App.esc(sub)}</span>` : ''}</div></div>
+      <div class="tablewrap"><table class="ratecard">
         <thead><tr>
           <th>Plan</th>
           <th class="num">Vendor</th>
@@ -49,8 +49,8 @@
     const box = document.getElementById('pricingContent');
     if (!box) return;
     box.innerHTML =
-      `<p class="tiny muted" style="margin:-6px 0 18px">Total = Vendor price + ${GST_PCT}% GST + ${CONV_PCT}% MOSS convenience (each computed on the vendor price). Internet plans carry a one-time installation charge of <b>${inr(ONE_TIME)}</b>.</p>`
-      + card('Internet — TATA', `one-time install ${inr(ONE_TIME)}`, TATA)
+      `<p class="tiny muted" style="margin:-6px 0 18px">Total = Vendor price + ${GST_PCT}% GST + ${CONV_PCT}% MOSS convenience (each computed on the vendor price). Only ACT internet plans carry a one-time installation charge of <b>${inr(ONE_TIME)}</b>.</p>`
+      + card('Internet — TATA', '', TATA)
       + card('Internet — ACT', `one-time install ${inr(ONE_TIME)}`, ACT)
       + card('Access Control — Swing door', 'per door', ACCESS);
   }

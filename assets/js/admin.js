@@ -45,22 +45,24 @@
   /* ---------- Users ---------- */
   async function loadUsers() {
     const body = document.getElementById('usersBody');
-    body.innerHTML = '<tr><td colspan="6"><div class="spin"></div></td></tr>';
+    body.innerHTML = '<tr><td colspan="5"><div class="spin"></div></td></tr>';
     document.getElementById('addUserBtn').onclick = () => userForm();
     let users;
     try { users = (await App.api('users_list')).users; }
-    catch (e) { body.innerHTML = `<tr><td colspan="6" class="empty">${App.esc(e.message)}</td></tr>`; return; }
+    catch (e) { body.innerHTML = `<tr><td colspan="5" class="empty">${App.esc(e.message)}</td></tr>`; return; }
 
-    body.innerHTML = users.map(u => `<tr>
-      <td><b>${App.esc(u.name)}</b></td>
-      <td class="muted">${App.esc(u.username)}</td>
+    body.innerHTML = users.map(u => {
+      const ini = (u.name || u.username || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+      return `<tr>
+      <td><div class="u-id"><span class="u-av">${App.esc(ini)}</span><span class="u-id-tx"><b>${App.esc(u.name)}</b><span class="u-handle">@${App.esc(u.username)}</span></span></div></td>
       <td class="muted">${App.esc(u.email||'—')}</td>
-      <td>${u.role==='admin'?'<span class="badge b-approved">Admin</span>':'<span class="badge b-submitted">Member</span>'}</td>
-      <td>${u.active==1?'<span class="badge b-paid">Active</span>':'<span class="badge b-rejected">Disabled</span>'}</td>
+      <td>${u.role==='admin'?'<span class="badge b-paid">Admin</span>':'<span class="badge b-on_hold">Member</span>'}</td>
+      <td>${u.active==1?'<span class="badge b-approved">Active</span>':'<span class="badge b-rejected">Disabled</span>'}</td>
       <td><div class="row-actions">
         <button class="btn icon sm ghost" data-edit="${u.id}" title="Edit">${App.icon('edit')}</button>
         ${u.id!=APP.user.id?`<button class="btn icon sm danger" data-del="${u.id}" title="Delete">${App.icon('trash')}</button>`:''}
-      </div></td></tr>`).join('');
+      </div></td></tr>`;
+    }).join('');
     body.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => userForm(users.find(x => x.id == b.dataset.edit)));
     body.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
       if (!await App.confirmDialog('Delete this user? Their records stay, but they lose access.')) return;

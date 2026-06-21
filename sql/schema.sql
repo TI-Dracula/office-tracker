@@ -1,4 +1,4 @@
--- IBC Office Tracker — database schema
+-- MOSS Operations — database schema
 -- Safe to run more than once (uses IF NOT EXISTS / INSERT IGNORE).
 SET NAMES utf8mb4;
 

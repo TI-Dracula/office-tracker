@@ -50,7 +50,7 @@ function h_me(): void {
         'csrf'     => csrf_token(),
         'is_admin' => is_admin(),
         'currency' => currency_symbol(),
-        'app_name' => setting_get('app_name', cfg('app.name', 'IBC Office Tracker')),
+        'app_name' => setting_get('app_name', cfg('app.name', 'MOSS Operations')),
     ]);
 }
 

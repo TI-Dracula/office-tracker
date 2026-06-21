@@ -1,4 +1,4 @@
-# IBC Office Tracker
+# MOSS Operations
 
 A self-hosted web app for **(1) tracking invoices submitted to finance** and **(2) tracking new fit-out projects** across four locations — DD, 1-OAR, GE, KP — with a visual "building bars" view of office occupancy.
 

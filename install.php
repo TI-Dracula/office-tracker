@@ -24,7 +24,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $db_name = post('db_name');
     $db_user = post('db_user');
     $db_pass = (string)($_POST['db_pass'] ?? '');
-    $app_name = post('app_name', 'IBC Office Tracker');
+    $app_name = post('app_name', 'MOSS Operations');
     $currency = post('currency', '₹') ?: '₹';
     $a_name = post('admin_name');
     $a_user = post('admin_user');
@@ -165,7 +165,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div class="sec">App</div>
       <div class="row">
-        <div><label>App name</label><input name="app_name" value="<?= htmlspecialchars(post('app_name','IBC Office Tracker')) ?>"></div>
+        <div><label>App name</label><input name="app_name" value="<?= htmlspecialchars(post('app_name','MOSS Operations')) ?>"></div>
         <div><label>Currency symbol</label><input name="currency" value="<?= htmlspecialchars(post('currency','₹')) ?>"></div>
       </div>
 

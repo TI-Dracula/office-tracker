@@ -18,7 +18,7 @@ return [
     ],
 
     'app' => [
-        'name'            => 'IBC Office Tracker',
+        'name'            => 'MOSS Operations',
         'currency'        => 'INR',
         'currency_symbol' => "\u{20B9}",   // ₹
         'timezone'        => 'Asia/Kolkata',

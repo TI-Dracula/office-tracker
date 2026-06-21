@@ -2,7 +2,7 @@
 require __DIR__ . '/lib/bootstrap.php';
 
 $user = current_user();
-$appName = setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
+$appName = setting_get('app_name', cfg('app.name', 'MOSS Operations'));
 $cur = currency_symbol();
 
 /* Reusable inline SVGs — premium line icons, no emojis */
@@ -74,7 +74,7 @@ window.APP = {
 
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><?= $svgBuilding ?></div><div><?= e($appName) ?><small>OFFICE OPERATIONS</small></div></div>
+    <div class="brand"><div class="logo"><?= $svgBuilding ?></div><div><?= e($appName) ?><small>FINANCE · PROJECTS · IT</small></div></div>
     <nav class="nav" id="nav">
       <a data-view="dashboard" class="active">Dashboard</a>
       <a data-view="invoices">Invoices</a>

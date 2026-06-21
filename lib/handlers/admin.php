@@ -147,7 +147,7 @@ function h_settings_get(): void {
     json_out([
         'ok' => true,
         'settings' => [
-            'app_name'        => setting_get('app_name', cfg('app.name', 'IBC Office Tracker')),
+            'app_name'        => setting_get('app_name', cfg('app.name', 'MOSS Operations')),
             'currency_symbol' => currency_symbol(),
         ],
     ]);
@@ -155,7 +155,7 @@ function h_settings_get(): void {
 
 function h_settings_save(): void {
     $in = json_input();
-    if (isset($in['app_name']))        setting_set('app_name', clean($in['app_name']) ?? 'IBC Office Tracker');
+    if (isset($in['app_name']))        setting_set('app_name', clean($in['app_name']) ?? 'MOSS Operations');
     if (isset($in['currency_symbol'])) setting_set('currency_symbol', clean($in['currency_symbol']) ?? '₹');
     log_activity('settings_update', '');
     json_out(['ok' => true]);
@@ -168,7 +168,7 @@ function h_settings_save(): void {
  */
 function send_welcome_email(string $to, string $name, string $username, string $password): void {
     try {
-        $app    = (string) setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
+        $app    = (string) setting_get('app_name', cfg('app.name', 'MOSS Operations'));
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $base   = $scheme . '://' . $host . rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
@@ -212,7 +212,7 @@ HTML;
 /** Send an email via SendGrid (if mail.sendgrid_key is set) or PHP mail(). Never throws. */
 function app_send_mail(string $to, string $subject, string $html, string $text): void {
     try {
-        $app   = (string) setting_get('app_name', cfg('app.name', 'IBC Office Tracker'));
+        $app   = (string) setting_get('app_name', cfg('app.name', 'MOSS Operations'));
         $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $dom   = preg_replace('/^www\./', '', explode(':', $host)[0]) ?: 'localhost';
         $from  = (string) (cfg('mail.from') ?: 'no-reply@' . $dom);

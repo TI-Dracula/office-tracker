@@ -243,11 +243,13 @@ function app_send_mail(string $to, string $subject, string $html, string $text):
         }
 
         $boundary = 'bd' . md5(uniqid('', true));
-        $headers  = "From: $fname <$from>\r\nReply-To: $from\r\nMIME-Version: 1.0\r\n" .
+        $headers  = "From: $fname <$from>\r\nReply-To: $from\r\n" .
+                    "Message-ID: <" . md5(uniqid('', true)) . "@$dom>\r\nMIME-Version: 1.0\r\n" .
                     "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\nX-Mailer: PHP";
         $body = "--$boundary\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n$text\r\n\r\n" .
                 "--$boundary\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n$html\r\n\r\n--$boundary--";
-        @mail($to, $subject, $body, $headers);
+        // -f sets the envelope sender so SPF aligns with your domain (big deliverability win on cPanel).
+        @mail($to, $subject, $body, $headers, '-f' . $from);
     } catch (Throwable $e) {
         // swallow
     }

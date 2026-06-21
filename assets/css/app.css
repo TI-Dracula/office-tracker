@@ -444,6 +444,42 @@ tr:hover .row-actions{opacity:1}
   box-shadow:0 0 12px var(--bcol),inset 0 1px 0 color-mix(in oklab,var(--bcol),#fff 45%)
 }
 .floor.active:hover{transform:translateX(2px) scale(1.05);filter:brightness(1.1);z-index:3}
+
+/* PARCHMENT (light) — the bloom glow is invisible on cream, so the active floor
+   earns emphasis through depth + saturation instead: deepened fill, crisp darkened
+   edge, layered dark elevation + one hue-tinted shadow layer, inner sheen. */
+[data-theme="light"] .floor.active{
+  background:linear-gradient(180deg,
+    color-mix(in oklab,var(--bcol),#fff 6%) 0%,
+    color-mix(in oklab,var(--bcol),#000 6%) 48%,
+    color-mix(in oklab,var(--bcol),#000 18%) 100%);
+  border:1px solid color-mix(in oklab,var(--bcol),#000 36%);
+  box-shadow:
+    0 1px 1px rgba(40,36,28,.10),
+    0 2px 4px rgba(40,36,28,.16),
+    0 4px 9px rgba(40,36,28,.12),
+    0 2px 5px color-mix(in oklab,var(--bcol),#000 30%),
+    inset 0 1px 0 color-mix(in oklab,var(--bcol),#fff 44%);
+  color:color-mix(in oklab,#0A1410,#F4EFE3 var(--ink-flip,0%));
+  text-shadow:0 1px 0 color-mix(in oklab,var(--bcol),#fff 20%);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+/* badge ink flip for the two medium hues (GE terracotta, KP forest) — keyed off the
+   inline --bcol each floor carries; the two light hues keep dark ink (--ink-flip unset) */
+[data-theme="light"] .floor.active[style*="A8743A" i],
+[data-theme="light"] .floor.active[style*="4F8C6A" i]{
+  --ink-flip:100%;
+  text-shadow:0 1px 0 color-mix(in oklab,var(--bcol),#000 28%);
+}
+[data-theme="light"] .floor.active:hover{
+  transform:translateY(-1px);
+  box-shadow:
+    0 1px 1px rgba(40,36,28,.10),
+    0 3px 6px rgba(40,36,28,.18),
+    0 7px 15px rgba(40,36,28,.14),
+    0 3px 7px color-mix(in oklab,var(--bcol),#000 30%),
+    inset 0 1px 0 color-mix(in oklab,var(--bcol),#fff 48%);
+}
 .floor.soon::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   box-shadow:0 0 16px 1px var(--ac-glow);opacity:0;animation:pulse 2.4s var(--ease-standard) infinite}
 @keyframes pulse{0%,100%{opacity:0}50%{opacity:.9}}

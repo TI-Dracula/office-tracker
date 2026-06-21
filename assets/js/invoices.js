@@ -128,7 +128,7 @@
       body: `
         <div class="formgrid">
           <div class="field"><label class="lbl">Invoice date</label><input id="f_date" type="date" value="${inv.invoice_date||today}"></div>
-          <div class="field"><label class="lbl">Vendor</label><input id="f_vendor" list="vlist" value="${App.esc(inv.vendor_name||'')}" placeholder="Start typing…"><datalist id="vlist">${vendorOpts}</datalist></div>
+          <div class="field"><label class="lbl">Vendor</label><input id="f_vendor" list="vlist" value="${App.esc(inv.vendor_name||'')}" placeholder="Pick a vendor or type a new one"><datalist id="vlist">${vendorOpts}</datalist></div>
           <div class="field"><label class="lbl">Invoice #</label><input id="f_num" value="${App.esc(inv.invoice_number||'')}"></div>
           <div class="field"><label class="lbl">Amount (${App.esc(APP.currency)})</label><input id="f_amount" type="number" step="0.01" min="0" value="${inv.amount||''}"></div>
           <div class="field"><label class="lbl">Category</label><input id="f_cat" list="clist" value="${App.esc(inv.category||'')}"><datalist id="clist">${catOpts}</datalist></div>

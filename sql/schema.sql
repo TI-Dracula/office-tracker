@@ -122,3 +122,21 @@ INSERT IGNORE INTO locations (code, name, maps_url, towers, floors, color, sort_
   ('1-OAR', '1-OAR', 'https://maps.app.goo.gl/eJqbFtLEVf4vr1VA6', 'A',       9,  '#6FBE8F', 2),
   ('GE',    'GE',    'https://maps.app.goo.gl/EfuXFdUBstGaVN3H8', 'A',       8,  '#A8743A', 3),
   ('KP',    'KP',    'https://maps.app.goo.gl/BcXhoTejHwMxqWmeA', 'C,D',     13, '#4F8C6A', 4);
+
+-- Common vendors (pick from these or type a new one when logging an invoice)
+INSERT IGNORE INTO vendors (name) VALUES
+  ('Tata Teleservices Ltd'),
+  ('ACT Fibernet'),
+  ('Bharti Airtel Ltd'),
+  ('Reliance Jio Infocomm Ltd'),
+  ('Spintly'),
+  ('greytHR'),
+  ('Value Point Systems Pvt Ltd'),
+  ('Brilyant IT Solutions'),
+  ('Spreetech'),
+  ('Xerox'),
+  ('Zoho Corporation'),
+  ('Rafael Networks'),
+  ('Phigrid'),
+  ('EngageApps'),
+  ('Anarock Property Consultants Pvt Ltd');

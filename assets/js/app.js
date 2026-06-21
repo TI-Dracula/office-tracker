@@ -158,6 +158,46 @@ const App = (() => {
     document.getElementById('drawerBackdrop').classList.remove('show');
   }
 
+  /* ---------- Combobox — styled pick-or-add dropdown (replaces the native datalist) ---------- */
+  function combobox(input, options) {
+    if (!input || input.dataset.cbx) return;
+    input.dataset.cbx = '1';
+    input.setAttribute('autocomplete', 'off');
+    input.removeAttribute('list');
+    const wrap = document.createElement('div');
+    wrap.className = 'cbx';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    const panel = document.createElement('div');
+    panel.className = 'cbx-panel';
+    wrap.appendChild(panel);
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      const matches = options.filter(o => String(o).toLowerCase().includes(q));
+      const exact = options.some(o => String(o).toLowerCase() === q);
+      let html = '';
+      if (q && !exact) {
+        const v = esc(input.value.trim());
+        html += `<div class="cbx-opt cbx-add" data-val="${v}">+ Add &ldquo;${v}&rdquo;</div>`;
+      }
+      html += matches.map(o => `<div class="cbx-opt" data-val="${esc(o)}">${esc(o)}</div>`).join('');
+      panel.innerHTML = html || '<div class="cbx-empty">No matches</div>';
+    };
+    const open = () => { render(); panel.classList.add('show'); };
+    const close = () => panel.classList.remove('show');
+    input.addEventListener('focus', open);
+    input.addEventListener('input', open);
+    input.addEventListener('blur', close);
+    input.addEventListener('keydown', e => { if (e.key === 'Escape') { close(); input.blur(); } });
+    panel.addEventListener('mousedown', e => {
+      const opt = e.target.closest('[data-val]');
+      if (!opt) return;
+      e.preventDefault();                       // keep focus so blur doesn't fire mid-click
+      input.value = opt.getAttribute('data-val');
+      close();
+    });
+  }
+
   /* ---------- Router ---------- */
   function register(view, fn) { loaders[view] = fn; }
   function show(view) {
@@ -188,5 +228,5 @@ const App = (() => {
 
   return { api, uploadFile, esc, money, moneyShort, fmtDate, fmtMonth, daysLabel, urgency,
            fileIcon, fileSize, badge, icon, STATUS_LABEL, toast, openModal, closeModal, confirmDialog,
-           openDrawer, closeDrawer, register, show, start };
+           openDrawer, closeDrawer, combobox, register, show, start };
 })();

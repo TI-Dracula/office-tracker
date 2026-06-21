@@ -78,8 +78,8 @@ window.APP = {
     <nav class="nav" id="nav">
       <a data-view="dashboard" class="active">Dashboard</a>
       <a data-view="projects">Projects</a>
-      <a data-view="invoices">Finance</a>
-      <a data-view="pricing">IT</a>
+      <a data-view="invoices">IT Invoices</a>
+      <a data-view="pricing">Pricing</a>
       <?php if (is_admin()): ?>
       <a data-view="users">Users</a>
       <?php endif; ?>
@@ -103,7 +103,7 @@ window.APP = {
     <!-- INVOICES -->
     <section class="view" id="view-invoices">
       <div class="page-head">
-        <div><h1>Finance</h1><div class="sub">Invoices submitted to finance</div></div>
+        <div><h1>IT Invoices</h1><div class="sub">Vendor invoices submitted to finance</div></div>
         <button class="btn primary" id="addInvoiceBtn"><?= $svgPlus ?> Add invoice</button>
       </div>
       <div class="toolbar">
@@ -183,7 +183,7 @@ window.APP = {
 
     <!-- IT PRICING -->
     <section class="view" id="view-pricing">
-      <div class="page-head"><div><h1>IT Pricing</h1><div class="sub">Internet &amp; access-control rate cards · vendor + 18% GST + 30% MOSS convenience</div></div></div>
+      <div class="page-head"><div><h1>Pricing</h1><div class="sub">Internet &amp; access-control rate cards · vendor + 18% GST + 30% MOSS convenience</div></div></div>
       <div id="pricingContent"><div class="spin"></div></div>
     </section>
 

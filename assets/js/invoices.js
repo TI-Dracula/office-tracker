@@ -115,8 +115,6 @@
     if (id) { try { inv = (await App.api('invoice_get', { params: { id } })).invoice; } catch (e) { return App.toast(e.message, 'err'); } }
 
     const today = new Date().toISOString().slice(0, 10);
-    const vendorOpts = vendors.map(v => `<option value="${App.esc(v.name)}">`).join('');
-    const catOpts = CATEGORIES.map(c => `<option value="${c}">`).join('');
     const statusSel = ['draft','submitted','approved','paid','rejected']
       .map(s => `<option value="${s}" ${inv.status===s?'selected':''}>${App.STATUS_LABEL[s]}</option>`).join('');
 
@@ -128,10 +126,10 @@
       body: `
         <div class="formgrid">
           <div class="field"><label class="lbl">Invoice date</label><input id="f_date" type="date" value="${inv.invoice_date||today}"></div>
-          <div class="field"><label class="lbl">Vendor</label><input id="f_vendor" list="vlist" value="${App.esc(inv.vendor_name||'')}" placeholder="Pick a vendor or type a new one"><datalist id="vlist">${vendorOpts}</datalist></div>
+          <div class="field"><label class="lbl">Vendor</label><input id="f_vendor" value="${App.esc(inv.vendor_name||'')}" placeholder="Pick a vendor or type a new one"></div>
           <div class="field"><label class="lbl">Invoice #</label><input id="f_num" value="${App.esc(inv.invoice_number||'')}"></div>
           <div class="field"><label class="lbl">Amount (${App.esc(APP.currency)})</label><input id="f_amount" type="number" step="0.01" min="0" value="${inv.amount||''}"></div>
-          <div class="field"><label class="lbl">Category</label><input id="f_cat" list="clist" value="${App.esc(inv.category||'')}"><datalist id="clist">${catOpts}</datalist></div>
+          <div class="field"><label class="lbl">Category</label><input id="f_cat" value="${App.esc(inv.category||'')}" placeholder="Pick or type a category"></div>
           <div class="field"><label class="lbl">Status</label><select id="f_status">${statusSel}</select></div>
           <div class="field"><label class="lbl">Submitted to finance on</label><input id="f_sub" type="date" value="${inv.submitted_date||''}"></div>
           <div class="field full"><label class="lbl">Notes</label><textarea id="f_notes">${App.esc(inv.notes||'')}</textarea></div>
@@ -139,6 +137,9 @@
         </div>`,
       foot: `<button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="f_save">${id?'Save changes':'Add invoice'}</button>`
     });
+
+    App.combobox(m.querySelector('#f_vendor'), vendors.map(v => v.name));
+    App.combobox(m.querySelector('#f_cat'), CATEGORIES);
 
     if (id) wireFileArea(m, 'invoice', id, () => refreshFiles(m, 'invoice', id));
 

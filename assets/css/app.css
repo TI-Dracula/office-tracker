@@ -413,6 +413,13 @@ td b{color:var(--tx-primary);font-weight:600}
 tr:hover .row-actions,tr:focus-within .row-actions{opacity:1;transform:none;pointer-events:auto}
 .empty{padding:54px 20px;text-align:center;color:var(--tx-muted);font-family:var(--font-display);font-style:italic;font-size:15px}
 .empty .big{font-size:34px;margin-bottom:10px;opacity:.5;font-style:normal}
+.empty-rich{display:flex;flex-direction:column;align-items:center;gap:5px;padding:48px 20px;font-style:normal}
+.empty-rich .big{width:54px;height:54px;margin-bottom:8px;border-radius:var(--r-lg);display:grid;place-items:center;
+  color:var(--ac);background:var(--ac-tint);border:1px solid var(--bd-gold-hair);opacity:1;font-size:0}
+.empty-rich .big .ic-svg{width:24px;height:24px}
+.empty-rich .empty-h{font-family:var(--font-display);font-size:17px;color:var(--tx-primary);font-style:normal}
+.empty-rich .empty-s{font-family:var(--font-ui);font-size:12.5px;color:var(--tx-muted);font-style:normal}
+.empty-rich .btn{margin-top:13px}
 
 /* ============================================================
    Badges / chips
@@ -451,6 +458,15 @@ tr:hover .row-actions,tr:focus-within .row-actions{opacity:1;transform:none;poin
   background:linear-gradient(90deg,transparent,var(--ac),transparent);
   animation:statbar .8s var(--ease-out) both}
 @keyframes statbar{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+/* KPI cards — a gold edge-glow that tracks the cursor (the one signature flourish) */
+.stat{--mx:50%}
+.stat::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;
+  background:radial-gradient(130px circle at var(--mx) 0,var(--ac-line),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  transition:opacity var(--t-quick) var(--ease-out)}
+.stat:hover::before{opacity:1}
+@media (prefers-reduced-motion:reduce){.stat::before{display:none}}
 
 .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
 .card-title{font-family:var(--font-display);font-size:17px;font-weight:500;color:var(--tx-primary);

@@ -76,6 +76,13 @@
           <div class="mt">${locBars || '<div class="muted tiny">No locations.</div>'}</div>
         </div>
       </div>`;
+
+    // KPI cards: gold edge-glow follows the cursor (one scoped listener on the grid)
+    const statGrid = box.querySelector('.stats');
+    if (statGrid) statGrid.addEventListener('mousemove', e => {
+      const s = e.target.closest('.stat'); if (!s) return;
+      s.style.setProperty('--mx', (e.clientX - s.getBoundingClientRect().left) + 'px');
+    });
   }
 
   App.register('dashboard', load);

@@ -74,7 +74,12 @@
        <div class="it"><b>${d.total ? App.money(d.sum / d.total) : App.money(0)}</b><span>Average</span></div>`;
 
     if (!d.invoices.length) {
-      body.innerHTML = `<tr><td colspan="8"><div class="empty">No invoices match. <span class="dot-link" id="emptyAdd">Add one →</span></div></td></tr>`;
+      body.innerHTML = `<tr><td colspan="8"><div class="empty empty-rich">
+        <div class="big">${App.icon('file')}</div>
+        <div class="empty-h">No invoices to show</div>
+        <div class="empty-s">Log a vendor invoice, or adjust your filters.</div>
+        <button class="btn ghost sm" id="emptyAdd">${App.icon('plus')} Add invoice</button>
+      </div></td></tr>`;
       document.getElementById('emptyAdd').onclick = () => openForm();
     } else {
       body.innerHTML = d.invoices.map(r => {

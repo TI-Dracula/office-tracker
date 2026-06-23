@@ -3,30 +3,31 @@
 
 function h_dashboard(): void {
     $db = db();
+    $fin = is_member();   // view-only users get NO finance data — not even over the wire
 
-    // Invoice summary
-    $invTot = $db->query('SELECT COUNT(*) n, COALESCE(SUM(amount),0) total FROM invoices')->fetch();
-    $byStatus = $db->query('SELECT status, COUNT(*) n, COALESCE(SUM(amount),0) total FROM invoices GROUP BY status')->fetchAll();
+    // Invoice summary (members/admins only)
+    $invTot = ['n' => 0, 'total' => 0]; $byStatus = []; $monthTotal = 0.0; $trend = []; $topVendors = [];
+    if ($fin) {
+        $invTot = $db->query('SELECT COUNT(*) n, COALESCE(SUM(amount),0) total FROM invoices')->fetch();
+        $byStatus = $db->query('SELECT status, COUNT(*) n, COALESCE(SUM(amount),0) total FROM invoices GROUP BY status')->fetchAll();
 
-    // This-month total
-    $mt = $db->prepare("SELECT COALESCE(SUM(amount),0) FROM invoices WHERE invoice_date >= ?");
-    $mt->execute([date('Y-m-01')]);
-    $monthTotal = (float)$mt->fetchColumn();
+        $mt = $db->prepare("SELECT COALESCE(SUM(amount),0) FROM invoices WHERE invoice_date >= ?");
+        $mt->execute([date('Y-m-01')]);
+        $monthTotal = (float)$mt->fetchColumn();
 
-    // Last 6 months trend
-    $trend = $db->query(
-        "SELECT DATE_FORMAT(invoice_date, '%Y-%m') ym, COALESCE(SUM(amount),0) total, COUNT(*) n
-         FROM invoices
-         WHERE invoice_date >= DATE_SUB(DATE_FORMAT(CURDATE(),'%Y-%m-01'), INTERVAL 5 MONTH)
-         GROUP BY ym ORDER BY ym"
-    )->fetchAll();
+        $trend = $db->query(
+            "SELECT DATE_FORMAT(invoice_date, '%Y-%m') ym, COALESCE(SUM(amount),0) total, COUNT(*) n
+             FROM invoices
+             WHERE invoice_date >= DATE_SUB(DATE_FORMAT(CURDATE(),'%Y-%m-01'), INTERVAL 5 MONTH)
+             GROUP BY ym ORDER BY ym"
+        )->fetchAll();
 
-    // Top vendors
-    $topVendors = $db->query(
-        "SELECT v.name, COUNT(*) n, COALESCE(SUM(i.amount),0) total
-         FROM invoices i JOIN vendors v ON v.id = i.vendor_id
-         GROUP BY v.id ORDER BY total DESC LIMIT 5"
-    )->fetchAll();
+        $topVendors = $db->query(
+            "SELECT v.name, COUNT(*) n, COALESCE(SUM(i.amount),0) total
+             FROM invoices i JOIN vendors v ON v.id = i.vendor_id
+             GROUP BY v.id ORDER BY total DESC LIMIT 5"
+        )->fetchAll();
+    }
 
     // Projects
     $prjOpen = (int)$db->query("SELECT COUNT(*) FROM projects WHERE status IN ('open','in_progress','on_hold')")->fetchColumn();
@@ -55,6 +56,7 @@ function h_dashboard(): void {
 
     json_out([
         'ok' => true,
+        'finance' => $fin,
         'invoices' => [
             'count'        => (int)$invTot['n'],
             'total'        => (float)$invTot['total'],

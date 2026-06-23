@@ -117,6 +117,20 @@ CREATE TABLE IF NOT EXISTS activity_log (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS brochures (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  vendor        VARCHAR(120) NOT NULL,
+  title         VARCHAR(190) DEFAULT NULL,
+  original_name VARCHAR(255) NOT NULL,
+  stored_name   VARCHAR(255) NOT NULL,
+  mime          VARCHAR(120) DEFAULT NULL,
+  size          INT DEFAULT 0,
+  uploaded_by   INT DEFAULT NULL,
+  uploaded_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_broc_user FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL,
+  INDEX idx_broc_vendor (vendor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Seed the four buildings (edit towers/floors/colours later in Settings → Buildings)
 INSERT IGNORE INTO locations (code, name, maps_url, towers, floors, color, sort_order) VALUES
   ('DD',    'DD',    'https://maps.app.goo.gl/hsSoK8svoUvTbM7s6', 'A,B,C,D', 8,  '#C7A15A', 1),

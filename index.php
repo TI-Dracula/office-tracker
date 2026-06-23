@@ -83,6 +83,7 @@ window.APP = {
       <a data-view="invoices">IT Invoices</a>
       <a data-view="pricing">Pricing</a>
       <?php endif; ?>
+      <a data-view="brochures">Brochures</a>
       <?php if (is_admin()): ?>
       <a data-view="users">Users</a>
       <?php endif; ?>
@@ -195,6 +196,15 @@ window.APP = {
     </section>
     <?php endif; ?>
 
+    <!-- BROCHURES -->
+    <section class="view" id="view-brochures">
+      <div class="page-head">
+        <div><h1>Brochures</h1><div class="sub">Vendor reference — Spintly, TATA, ACT &amp; more</div></div>
+        <?php if (is_member()): ?><button class="btn primary" id="addBrochureBtn"><?= $svgPlus ?> Add brochure</button><?php endif; ?>
+      </div>
+      <div id="brochuresContent"><div class="spin"></div></div>
+    </section>
+
     <?php if (is_admin()): ?>
     <!-- USERS (admin) -->
     <section class="view" id="view-users">
@@ -221,6 +231,7 @@ window.APP = {
 <script src="assets/js/invoices.js"></script>
 <script src="assets/js/projects.js"></script>
 <script src="assets/js/pricing.js"></script>
+<script src="assets/js/brochures.js"></script>
 <?php if (is_admin()): ?><script src="assets/js/admin.js"></script><?php endif; ?>
 <script>App.start();</script>
 <script>

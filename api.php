@@ -8,6 +8,7 @@ require __DIR__ . '/lib/handlers/auth.php';
 require __DIR__ . '/lib/handlers/invoices.php';
 require __DIR__ . '/lib/handlers/projects.php';
 require __DIR__ . '/lib/handlers/files.php';
+require __DIR__ . '/lib/handlers/brochures.php';
 require __DIR__ . '/lib/handlers/admin.php';
 
 // action => [function, auth(public|user|admin), needs CSRF, must be POST]
@@ -36,6 +37,11 @@ $routes = [
     'file_upload'     => ['h_file_upload',      'member', true,  true],
     'file_download'   => ['h_file_download',    'user',   false, false],
     'file_delete'     => ['h_file_delete',      'member', true,  true],
+
+    'brochures_list'   => ['h_brochures_list',    'user',   false, false],
+    'brochure_upload'  => ['h_brochure_upload',   'member', true,  true],
+    'brochure_download'=> ['h_brochure_download', 'user',   false, false],
+    'brochure_delete'  => ['h_brochure_delete',   'member', true,  true],
 
     'users_list'      => ['h_users_list',       'admin',  false, false],
     'user_save'       => ['h_user_save',        'admin',  true,  true],

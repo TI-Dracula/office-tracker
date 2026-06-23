@@ -311,9 +311,15 @@ const App = (() => {
         cells += `<button type="button" class="dpick-day${isSel ? ' sel' : ''}${isToday ? ' today' : ''}" data-d="${d}">${d}</button>`;
       }
       panel.innerHTML = `<div class="dpick-head">
-          <button type="button" class="dpick-nav" data-nav="-1" aria-label="Previous month">&lsaquo;</button>
+          <div class="dpick-navg">
+            <button type="button" class="dpick-nav" data-nav="-12" aria-label="Previous year">&laquo;</button>
+            <button type="button" class="dpick-nav" data-nav="-1" aria-label="Previous month">&lsaquo;</button>
+          </div>
           <div class="dpick-mo">${DP_MONTHS[view.m]} ${view.y}</div>
-          <button type="button" class="dpick-nav" data-nav="1" aria-label="Next month">&rsaquo;</button>
+          <div class="dpick-navg">
+            <button type="button" class="dpick-nav" data-nav="1" aria-label="Next month">&rsaquo;</button>
+            <button type="button" class="dpick-nav" data-nav="12" aria-label="Next year">&raquo;</button>
+          </div>
         </div>
         <div class="dpick-dow">${DP_DOW.map(d => `<span>${d}</span>`).join('')}</div>
         <div class="dpick-grid">${cells}</div>
@@ -337,7 +343,7 @@ const App = (() => {
     trigger.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
     panel.addEventListener('mousedown', e => {
       const nav = e.target.closest('[data-nav]'), day = e.target.closest('[data-d]'), act = e.target.closest('[data-act]');
-      if (nav) { e.preventDefault(); view.m += +nav.dataset.nav; if (view.m < 0) { view.m = 11; view.y--; } if (view.m > 11) { view.m = 0; view.y++; } build(); }
+      if (nav) { e.preventDefault(); const t = view.y * 12 + view.m + (+nav.dataset.nav); view.y = Math.floor(t / 12); view.m = ((t % 12) + 12) % 12; build(); }
       else if (day) { e.preventDefault(); commit(`${view.y}-${pad(view.m + 1)}-${pad(+day.dataset.d)}`); }
       else if (act) { e.preventDefault(); if (act.dataset.act === 'clear') commit(''); else { const n = new Date(); commit(`${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`); } }
     });

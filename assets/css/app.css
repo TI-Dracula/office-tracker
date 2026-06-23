@@ -343,8 +343,9 @@ input[type=checkbox]:focus-visible{outline:2px solid var(--ac);outline-offset:2p
 .dpick-panel.show{display:block;animation:fade .14s var(--ease-out)}
 .dpick-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .dpick-mo{font-family:var(--font-display);font-weight:500;font-size:15px;color:var(--tx-primary)}
-.dpick-nav{width:30px;height:30px;border-radius:var(--r-sm);border:1px solid var(--bd-hairline);background:transparent;
-  color:var(--tx-secondary);font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;
+.dpick-navg{display:flex;gap:3px}
+.dpick-nav{width:28px;height:28px;border-radius:var(--r-sm);border:1px solid var(--bd-hairline);background:transparent;
+  color:var(--tx-secondary);font-size:15px;line-height:1;cursor:pointer;display:grid;place-items:center;
   transition:background var(--t-quick) var(--ease-out),border-color var(--t-quick),color var(--t-quick)}
 .dpick-nav:hover{background:var(--ac-tint);border-color:var(--bd-gold-hair);color:var(--tx-primary)}
 .dpick-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}

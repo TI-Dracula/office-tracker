@@ -19,23 +19,23 @@ $routes = [
 
     'dashboard'       => ['h_dashboard',        'user',   false, false],
 
-    'vendors_list'    => ['h_vendors_list',     'user',   false, false],
-    'invoices_list'   => ['h_invoices_list',    'user',   false, false],
-    'invoice_get'     => ['h_invoice_get',      'user',   false, false],
-    'invoice_save'    => ['h_invoice_save',     'user',   true,  true],
-    'invoice_delete'  => ['h_invoice_delete',   'user',   true,  true],
-    'invoices_export' => ['h_invoices_export',  'user',   false, false],
+    'vendors_list'    => ['h_vendors_list',     'member', false, false],
+    'invoices_list'   => ['h_invoices_list',    'member', false, false],
+    'invoice_get'     => ['h_invoice_get',      'member', false, false],
+    'invoice_save'    => ['h_invoice_save',     'member', true,  true],
+    'invoice_delete'  => ['h_invoice_delete',   'member', true,  true],
+    'invoices_export' => ['h_invoices_export',  'member', false, false],
 
     'locations_list'  => ['h_locations_list',   'user',   false, false],
     'location_save'   => ['h_location_save',    'admin',  true,  true],
     'projects_list'   => ['h_projects_list',    'user',   false, false],
     'project_get'     => ['h_project_get',      'user',   false, false],
-    'project_save'    => ['h_project_save',     'user',   true,  true],
-    'project_delete'  => ['h_project_delete',   'user',   true,  true],
+    'project_save'    => ['h_project_save',     'member', true,  true],
+    'project_delete'  => ['h_project_delete',   'member', true,  true],
 
-    'file_upload'     => ['h_file_upload',      'user',   true,  true],
+    'file_upload'     => ['h_file_upload',      'member', true,  true],
     'file_download'   => ['h_file_download',    'user',   false, false],
-    'file_delete'     => ['h_file_delete',      'user',   true,  true],
+    'file_delete'     => ['h_file_delete',      'member', true,  true],
 
     'users_list'      => ['h_users_list',       'admin',  false, false],
     'user_save'       => ['h_user_save',        'admin',  true,  true],
@@ -55,8 +55,9 @@ if (!isset($routes[$action])) {
 if ($mustPost && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_error('POST required.', 405);
 }
-if ($auth === 'user')  require_login();
-if ($auth === 'admin') require_admin();
+if ($auth === 'user')   require_login();
+if ($auth === 'member') require_member();
+if ($auth === 'admin')  require_admin();
 if ($needsCsrf) csrf_check();
 
 try {

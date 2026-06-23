@@ -66,6 +66,7 @@ f.addEventListener('submit',async e=>{
 window.APP = {
   user: <?= json_encode(public_user($user), JSON_UNESCAPED_UNICODE) ?>,
   isAdmin: <?= is_admin() ? 'true' : 'false' ?>,
+  canWrite: <?= is_member() ? 'true' : 'false' ?>,
   csrf: <?= json_encode(csrf_token()) ?>,
   currency: <?= json_encode($cur) ?>,
   appName: <?= json_encode($appName) ?>
@@ -78,8 +79,10 @@ window.APP = {
     <nav class="nav" id="nav">
       <a data-view="dashboard" class="active">Dashboard</a>
       <a data-view="projects">Projects</a>
+      <?php if (is_member()): ?>
       <a data-view="invoices">IT Invoices</a>
       <a data-view="pricing">Pricing</a>
+      <?php endif; ?>
       <?php if (is_admin()): ?>
       <a data-view="users">Users</a>
       <?php endif; ?>
@@ -100,6 +103,7 @@ window.APP = {
       <div id="dashContent"><div class="spin"></div></div>
     </section>
 
+    <?php if (is_member()): ?>
     <!-- INVOICES -->
     <section class="view" id="view-invoices">
       <div class="page-head">
@@ -139,12 +143,13 @@ window.APP = {
       </table></div></div>
       <div class="pager" id="invPager"></div>
     </section>
+    <?php endif; ?>
 
     <!-- PROJECTS -->
     <section class="view" id="view-projects">
       <div class="page-head">
         <div><h1>Projects</h1><div class="sub">New fit-outs across DD · 1-OAR · GE · KP</div></div>
-        <button class="btn primary" id="addProjectBtn"><?= $svgPlus ?> Add project</button>
+        <?php if (is_member()): ?><button class="btn primary" id="addProjectBtn"><?= $svgPlus ?> Add project</button><?php endif; ?>
       </div>
       <div class="subtabs" id="projTabs">
         <button data-tab="buildings" class="active">Building view</button>
@@ -164,6 +169,7 @@ window.APP = {
             <option value="on_hold">On hold</option><option value="completed">Completed</option>
           </select>
           <label class="flex tiny" style="gap:6px;color:var(--mut)"><input type="checkbox" id="prjOpenOnly"> Open only</label>
+          <label class="flex tiny" style="gap:6px;color:var(--mut)"><input type="checkbox" id="prjCS"> Customer Success</label>
         </div>
       </div>
       <div id="prjBuildings" class="buildings"></div>
@@ -181,11 +187,13 @@ window.APP = {
       </table></div></div>
     </section>
 
+    <?php if (is_member()): ?>
     <!-- IT PRICING -->
     <section class="view" id="view-pricing">
       <div class="page-head"><div><h1>Pricing</h1><div class="sub">Internet &amp; access-control rate cards · vendor + 18% GST + 30% MOSS convenience</div></div></div>
       <div id="pricingContent"><div class="spin"></div></div>
     </section>
+    <?php endif; ?>
 
     <?php if (is_admin()): ?>
     <!-- USERS (admin) -->

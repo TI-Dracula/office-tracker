@@ -79,8 +79,10 @@
         <div class="field"><label class="lbl">Username</label><input id="u_user" value="${App.esc(u?.username||'')}"></div>
         <div class="field"><label class="lbl">Email (optional)</label><input id="u_email" value="${App.esc(u?.email||'')}"></div>
         <div class="field"><label class="lbl">Role</label><select id="u_role">
-          <option value="member" ${u?.role!=='admin'?'selected':''}>Member (add &amp; view)</option>
-          <option value="admin" ${u?.role==='admin'?'selected':''}>Admin (full control)</option></select></div>
+          <option value="admin" ${u?.role==='admin'?'selected':''}>Admin — full control</option>
+          <option value="member" ${(!u || u.role==='member')?'selected':''}>Member — add &amp; modify</option>
+          <option value="viewer" ${u?.role==='viewer'?'selected':''}>Viewer — read-only (no pricing/invoices)</option>
+        </select></div>
         <div class="field"><label class="lbl">${u?'New password (leave blank to keep)':'Password (leave blank to email an invite)'}</label><input id="u_pass" type="password"></div>
         ${u?`<div class="field"><label class="lbl">Status</label><select id="u_active">
           <option value="1" ${u.active==1?'selected':''}>Active</option>

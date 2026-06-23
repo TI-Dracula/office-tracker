@@ -434,6 +434,8 @@ tr:hover .row-actions,tr:focus-within .row-actions{opacity:1;transform:none;poin
 .b-approved,.b-completed{color:var(--ok);background:var(--ok-tint);border-color:var(--ok-bd)}
 .b-rejected{color:var(--bad);background:var(--bad-tint);border-color:var(--bad-bd)}
 .b-on_hold{color:var(--neutral);background:var(--neutral-tint);border-color:var(--neutral-bd)}
+/* Customer Success — gold tag, distinct from the project statuses (none of which are gold) */
+.b-cs{color:var(--ac);background:var(--ac-tint);border-color:var(--bd-gold-hair)}
 /* paid — the one gold-crowned status */
 .b-paid{color:var(--ac);background:var(--ac-tint);border:1px solid var(--bd-gold-hair)}
 .b-paid::before{content:"✓";width:auto;height:auto;border-radius:0;background:none;font-size:10px;font-weight:700}

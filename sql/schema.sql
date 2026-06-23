@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   username      VARCHAR(80)  NOT NULL UNIQUE,
   email         VARCHAR(190) DEFAULT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role          ENUM('admin','member') NOT NULL DEFAULT 'member',
+  role          ENUM('admin','member','viewer') NOT NULL DEFAULT 'member',
   active        TINYINT(1) NOT NULL DEFAULT 1,
   created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS projects (
   area_sqft     INT DEFAULT NULL,
   client        VARCHAR(190) DEFAULT NULL,
   notes         TEXT,
+  is_cs         TINYINT(1) NOT NULL DEFAULT 0,   -- Customer Success project
   lan_per_ws    INT DEFAULT NULL,
   wireless_ap   INT DEFAULT NULL,
   meeting_tv    INT DEFAULT NULL,

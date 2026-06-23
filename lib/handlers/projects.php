@@ -63,6 +63,9 @@ function h_projects_list(): void {
         $where[] = "p.status IN ($in)";
         array_push($params, ...PROJECT_ACTIVE);
     }
+    if (!empty($g['cs'])) {
+        $where[] = 'p.is_cs = 1';
+    }
 
     $sortMap = [
         'handover_date' => 'p.handover_date',
@@ -141,6 +144,7 @@ function h_project_save(): void {
         'handover_date' => clean($in['handover_date'] ?? null),
         'status'        => $status,
         'notes'         => clean($in['notes'] ?? null),
+        'is_cs'         => !empty($in['is_cs']) ? 1 : 0,
         'lan_per_ws'    => ($v = clean($in['lan_per_ws'] ?? null)) !== null ? (int)$v : null,
         'wireless_ap'   => ($v = clean($in['wireless_ap'] ?? null)) !== null ? (int)$v : null,
         'meeting_tv'    => ($v = clean($in['meeting_tv'] ?? null)) !== null ? (int)$v : null,

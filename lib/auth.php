@@ -14,6 +14,9 @@ function current_user(): ?array {
 
 function is_logged_in(): bool { return current_user() !== null; }
 function is_admin(): bool { $u = current_user(); return $u && $u['role'] === 'admin'; }
+/** Admin or member — i.e. NOT a view-only user. Members can add & modify; viewers cannot, and cannot see pricing/invoices. */
+function is_member(): bool { $u = current_user(); return $u && ($u['role'] === 'admin' || $u['role'] === 'member'); }
+function is_viewer(): bool { $u = current_user(); return $u && $u['role'] === 'viewer'; }
 
 /** Public-safe view of a user row (no password hash). */
 function public_user(array $u): array {
@@ -30,7 +33,8 @@ function public_user(array $u): array {
 function can_edit_record($createdBy): bool {
     if (is_admin()) return true;
     $u = current_user();
-    return $u && (int)$createdBy === (int)$u['id'];
+    if (!$u || $u['role'] === 'viewer') return false;   // view-only users never edit
+    return (int)$createdBy === (int)$u['id'];
 }
 
 function require_login(): void {
@@ -40,6 +44,11 @@ function require_login(): void {
 function require_admin(): void {
     require_login();
     if (!is_admin()) json_error('Admins only.', 403);
+}
+
+function require_member(): void {
+    require_login();
+    if (!is_member()) json_error('You have view-only access — this action is not available.', 403);
 }
 
 /** Attempt a login. Returns the user row or null. */

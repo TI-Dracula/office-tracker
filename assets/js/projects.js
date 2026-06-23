@@ -12,15 +12,18 @@
       location_id: document.getElementById('prjLoc').value,
       status: document.getElementById('prjStatus').value,
       open_only: document.getElementById('prjOpenOnly').checked ? 1 : '',
+      cs: document.getElementById('prjCS').checked ? 1 : '',
     };
   }
 
   function init() {
     if (inited) return; inited = true;
-    document.getElementById('addProjectBtn').onclick = () => openForm();
+    const addBtn = document.getElementById('addProjectBtn');
+    if (addBtn) addBtn.onclick = () => openForm();           // null for view-only users
     document.getElementById('prjSearch').oninput = () => { clearTimeout(debounce); debounce = setTimeout(refresh, 300); };
     ['prjLoc','prjStatus'].forEach(id => document.getElementById(id).onchange = refresh);
     document.getElementById('prjOpenOnly').onchange = refresh;
+    document.getElementById('prjCS').onchange = refresh;
     document.querySelectorAll('#projTabs button').forEach(b => b.onclick = () => {
       state.tab = b.dataset.tab;
       document.querySelectorAll('#projTabs button').forEach(x => x.classList.toggle('active', x === b));
@@ -166,7 +169,7 @@
       return `<div class="pcard panel" data-proj="${p.id}">
         <div class="top">
           <div><div class="nm">${App.esc(p.name)}</div></div>
-          ${App.badge(p.status)}
+          <div class="flex" style="gap:6px">${p.is_cs==1?'<span class="badge b-cs">CS</span>':''}${App.badge(p.status)}</div>
         </div>
         <div class="where">
           <span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span>
@@ -197,7 +200,7 @@
       const actions = p.can_edit ? `<button class="btn icon sm ghost" data-edit="${p.id}" title="Edit">${App.icon('edit')}</button>
           <button class="btn icon sm danger" data-del="${p.id}" title="Delete">${App.icon('trash')}</button>` : '';
       return `<tr data-proj="${p.id}" style="cursor:pointer">
-        <td><b>${App.esc(p.name)}</b></td>
+        <td><b>${App.esc(p.name)}</b>${p.is_cs==1?' <span class="badge b-cs">CS</span>':''}</td>
         <td><span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span></td>
         <td class="tiny">${p.tower?'Tower '+App.esc(p.tower):'—'}${p.floor?' · Fl '+p.floor:''}</td>
         <td class="nowrap">${hd}</td>
@@ -275,7 +278,7 @@
           <div class="x" data-close>&times;</div>
         </div>
         <h2 style="margin:12px 0 4px;font-size:20px">${App.esc(p.name)}</h2>
-        <div class="flex" style="gap:8px">${App.badge(p.status)}</div>
+        <div class="flex" style="gap:8px">${p.is_cs==1?'<span class="badge b-cs">Customer Success</span>':''}${App.badge(p.status)}</div>
       </div>
       <div class="drawer-body">
         ${cd}
@@ -326,6 +329,7 @@
         <div class="field"><label class="lbl">Floor</label><input id="p_floor" type="number" min="0" value="${p.floor??''}"></div>
         <div class="field"><label class="lbl">Handover date</label><input id="p_handover" type="date" value="${p.handover_date||''}"></div>
         <div class="field"><label class="lbl">Status</label><select id="p_status">${statusSel}</select></div>
+        <div class="field"><label class="lbl">Project type</label><label class="flex" style="gap:9px;padding-top:9px;font-size:13.5px;color:var(--tx-secondary)"><input type="checkbox" id="p_cs" ${p.is_cs==1?'checked':''}> Customer Success</label></div>
         <div class="field full"><label class="lbl">Notes</label><textarea id="p_notes">${App.esc(p.notes||'')}</textarea></div>
         <div class="fsec">Passive cabling</div>
         <div class="field"><label class="lbl">LAN points / workstation</label><input id="p_lan" type="number" min="0" value="${p.lan_per_ws??''}"></div>
@@ -369,7 +373,7 @@
       const payload = { id, name, location_id: m.querySelector('#p_loc').value,
         tower: m.querySelector('#p_tower').value, floor: m.querySelector('#p_floor').value,
         handover_date: m.querySelector('#p_handover').value, status: m.querySelector('#p_status').value,
-        notes: m.querySelector('#p_notes').value,
+        notes: m.querySelector('#p_notes').value, is_cs: m.querySelector('#p_cs').checked ? 1 : 0,
         lan_per_ws: m.querySelector('#p_lan').value, wireless_ap: m.querySelector('#p_ap').value,
         meeting_tv: m.querySelector('#p_tv').value, meeting_table: m.querySelector('#p_mtable').value,
         has_ll: m.querySelector('#p_ll').value, ll_primary: m.querySelector('#p_llp').value, ll_secondary: m.querySelector('#p_lls').value,

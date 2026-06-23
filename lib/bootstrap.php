@@ -28,8 +28,12 @@ ini_set('log_errors', '1');
 require __DIR__ . '/helpers.php';
 require __DIR__ . '/db.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/migrate.php';
 
 date_default_timezone_set(cfg('app.timezone', 'Asia/Kolkata'));
+
+// Keep the database schema up to date (no-op once current).
+maybe_migrate();
 
 // Hardened session cookie
 if (session_status() !== PHP_SESSION_ACTIVE) {

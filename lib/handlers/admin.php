@@ -84,7 +84,7 @@ function h_user_save(): void {
     $id = (int)($in['id'] ?? 0);
     $name = clean($in['name'] ?? null);
     $username = clean($in['username'] ?? null);
-    $role = ($in['role'] ?? 'member') === 'admin' ? 'admin' : 'member';
+    $role = in_array($in['role'] ?? '', ['admin', 'member', 'viewer'], true) ? $in['role'] : 'member';
     $email = clean($in['email'] ?? null);
     $password = (string)($in['password'] ?? '');
     $active = !empty($in['active']) ? 1 : 0;

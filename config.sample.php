@@ -37,6 +37,24 @@ return [
         'model'   => 'claude-haiku-4-5-20251001',
     ],
 
+    /**
+     * OPTIONAL — Microsoft 365 directory sync (dormant by design).
+     * Asset Management works without this (add people manually). To pull your
+     * staff list in from Microsoft 365, create an Entra (Azure AD) app
+     * registration with the Application permission "User.Read.All" (admin
+     * consent granted), then fill these in and set enabled => true:
+     *   - tenant_id / client_id from the app registration's Overview page
+     *   - client_secret from Certificates & secrets (store the VALUE, not the ID)
+     * Login stays username/password — this only syncs the people directory.
+     */
+    'm365' => [
+        'enabled'             => false,
+        'tenant_id'           => '',
+        'client_id'           => '',
+        'client_secret'       => '',
+        'sync_disabled_users' => false,   // also deactivate people disabled in M365
+    ],
+
     // Auto-generated random string used to sign sessions/CSRF. install.php fills this.
     'secret' => 'CHANGE_ME',
 ];

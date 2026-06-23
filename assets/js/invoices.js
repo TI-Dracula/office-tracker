@@ -23,9 +23,12 @@
     ['invVendor','invStatus','invFrom','invTo'].forEach(id =>
       document.getElementById(id).onchange = () => { state.page = 1; refresh(); });
     document.getElementById('invClear').onclick = () => {
-      ['invSearch','invVendor','invStatus','invFrom','invTo'].forEach(id => document.getElementById(id).value = '');
+      ['invSearch','invVendor','invStatus'].forEach(id => document.getElementById(id).value = '');
+      App.setDate(document.getElementById('invFrom'), '');
+      App.setDate(document.getElementById('invTo'), '');
       state.page = 1; refresh();
     };
+    App.wireDates(document.getElementById('view-invoices')); // filter date fields
     document.getElementById('invExport').onclick = () => {
       const f = filters(); let url = 'api.php?action=invoices_export';
       for (const [k,v] of Object.entries(f)) if (v) url += '&' + k + '=' + encodeURIComponent(v);
@@ -127,19 +130,20 @@
       wide: true,
       body: `
         <div class="formgrid">
-          <div class="field"><label class="lbl">Invoice date</label><input id="f_date" type="date" value="${inv.invoice_date||today}"></div>
+          <div class="field"><label class="lbl">Invoice date</label><input id="f_date" data-date value="${inv.invoice_date||today}"></div>
           <div class="field"><label class="lbl">Vendor</label><input id="f_vendor" list="vlist" value="${App.esc(inv.vendor_name||'')}" placeholder="Start typing…"><datalist id="vlist">${vendorOpts}</datalist></div>
           <div class="field"><label class="lbl">Invoice #</label><input id="f_num" value="${App.esc(inv.invoice_number||'')}"></div>
           <div class="field"><label class="lbl">Amount (${App.esc(APP.currency)})</label><input id="f_amount" type="number" step="0.01" min="0" value="${inv.amount||''}"></div>
           <div class="field"><label class="lbl">Category</label><input id="f_cat" list="clist" value="${App.esc(inv.category||'')}"><datalist id="clist">${catOpts}</datalist></div>
           <div class="field"><label class="lbl">Status</label><select id="f_status">${statusSel}</select></div>
-          <div class="field"><label class="lbl">Submitted to finance on</label><input id="f_sub" type="date" value="${inv.submitted_date||''}"></div>
+          <div class="field"><label class="lbl">Submitted to finance on</label><input id="f_sub" data-date value="${inv.submitted_date||''}"></div>
           <div class="field full"><label class="lbl">Notes</label><textarea id="f_notes">${App.esc(inv.notes||'')}</textarea></div>
           <div class="field full"><label class="lbl">Attached file (invoice scan / PDF)</label><div id="f_files">${filesHtml}</div></div>
         </div>`,
       foot: `<button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="f_save">${id?'Save changes':'Add invoice'}</button>`
     });
 
+    App.wireDates(m);
     if (id) wireFileArea(m, 'invoice', id, () => refreshFiles(m, 'invoice', id));
 
     m.querySelector('#f_save').onclick = async () => {

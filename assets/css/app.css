@@ -367,6 +367,56 @@ tr:hover .row-actions{opacity:1}
 .dot-link{cursor:pointer;color:var(--accent)}
 .dot-link:hover{text-decoration:underline}
 
+/* ---------- Custom date picker ---------- */
+.dp-display{cursor:pointer}
+.dp-pop{position:fixed;z-index:200;width:260px;display:none;padding:12px;
+  background:linear-gradient(180deg,var(--panel-solid),#11192a);border:1px solid var(--line-strong);
+  border-radius:14px;box-shadow:var(--shadow)}
+.dp-pop.show{display:block;animation:pop .15s ease}
+.dp-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.dp-sel{flex:1;display:flex;gap:6px}
+.dp-sel select{padding:6px 8px;font-size:13px}
+.dp-month{flex:1}
+.dp-year{width:78px}
+.dp-nav{width:30px;height:30px;flex:none;border-radius:8px;border:1px solid var(--line-strong);
+  background:rgba(120,140,190,.08);color:var(--ink);font-size:18px;line-height:1;cursor:pointer}
+.dp-nav:hover{background:rgba(120,140,190,.18)}
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dp-dow{display:grid;place-items:center;height:26px;font-size:10.5px;color:var(--mut);font-weight:600}
+.dp-cell{height:32px;border:0;border-radius:8px;background:transparent;color:var(--ink-soft);
+  font-size:12.5px;cursor:pointer;font-family:inherit;transition:.1s}
+.dp-cell:hover{background:rgba(120,140,190,.16);color:var(--ink)}
+.dp-cell.empty{cursor:default}
+.dp-cell.today{box-shadow:inset 0 0 0 1px var(--line-strong)}
+.dp-cell.sel{background:linear-gradient(180deg,var(--accent),#4f88e8);color:#06122b;font-weight:700}
+.dp-foot{display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.dp-link{background:none;border:0;color:var(--accent);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 6px}
+.dp-link:hover{text-decoration:underline}
+
+/* ---------- Asset status badges ---------- */
+.b-in_use{color:var(--ok);background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3)}
+.b-in_stock{color:var(--info);background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3)}
+.b-repair{color:var(--warn);background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.3)}
+.b-retired{color:#9aa6c4;background:rgba(154,166,196,.12);border-color:rgba(154,166,196,.3)}
+
+/* ---------- Asset history timeline ---------- */
+.timeline{display:flex;flex-direction:column;gap:2px}
+.tl-item{display:flex;gap:11px;padding:9px 4px;border-bottom:1px solid var(--line)}
+.tl-item:last-child{border-bottom:0}
+.tl-ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px;
+  background:rgba(120,140,190,.12);flex:none}
+.tl-main{font-size:13px;font-weight:500}
+
+/* ---------- Brochures ---------- */
+.broch-group{margin-bottom:22px}
+.broch-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.provider-chip{display:inline-flex;align-items:center;padding:5px 14px;border-radius:9px;font-weight:700;font-size:14px;
+  color:#06122b;background:linear-gradient(145deg,var(--accent),var(--accent-2));box-shadow:var(--shadow-sm)}
+.pcard.brochure{cursor:default}
+.pcard.brochure:hover{transform:none}
+.big-ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:22px;
+  background:rgba(120,140,190,.12);flex:none}
+
 @media (max-width:880px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .grid2{grid-template-columns:1fr}

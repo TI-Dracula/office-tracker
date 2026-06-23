@@ -67,6 +67,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $set = $pdo->prepare('INSERT INTO settings (k,v) VALUES (?,?) ON DUPLICATE KEY UPDATE v=VALUES(v)');
             $set->execute(['app_name', $app_name]);
             $set->execute(['currency_symbol', $currency]);
+            $set->execute(['db_version', '2']); // fresh install already has the latest schema
 
             // Write config.php
             $config = [
@@ -79,6 +80,7 @@ if (!$alreadyInstalled && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     'timezone' => 'Asia/Kolkata', 'max_upload_mb' => 15,
                 ],
                 'ai' => ['enabled' => false, 'api_key' => '', 'model' => 'claude-haiku-4-5-20251001'],
+                'm365' => ['enabled' => false, 'tenant_id' => '', 'client_id' => '', 'client_secret' => '', 'sync_disabled_users' => false],
                 'secret' => bin2hex(random_bytes(32)),
             ];
             file_put_contents($CONFIG_FILE, "<?php\nreturn " . var_export($config, true) . ";\n");

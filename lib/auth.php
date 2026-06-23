@@ -15,6 +15,12 @@ function current_user(): ?array {
 function is_logged_in(): bool { return current_user() !== null; }
 function is_admin(): bool { $u = current_user(); return $u && $u['role'] === 'admin'; }
 
+/** Read-only role: may view Projects & Brochures only — no invoices, assets, pricing. */
+function is_viewer(): bool { $u = current_user(); return $u && $u['role'] === 'viewer'; }
+
+/** May create/modify records (admin or member, i.e. any logged-in non-viewer). */
+function is_editor(): bool { return is_logged_in() && !is_viewer(); }
+
 /** Public-safe view of a user row (no password hash). */
 function public_user(array $u): array {
     return [
@@ -35,6 +41,11 @@ function can_edit_record($createdBy): bool {
 
 function require_login(): void {
     if (!is_logged_in()) json_error('Please log in.', 401);
+}
+
+function require_editor(): void {
+    require_login();
+    if (is_viewer()) json_error('Your access is view-only.', 403);
 }
 
 function require_admin(): void {

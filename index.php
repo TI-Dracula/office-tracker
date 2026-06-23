@@ -41,7 +41,10 @@ f.addEventListener('submit',async e=>{
 });
 </script>
 </body></html>
-<?php exit; endif; /* ---------------- Logged in: app shell ---------------- */ ?>
+<?php exit; endif; /* ---------------- Logged in: app shell ---------------- */
+$isAdmin  = is_admin();
+$isEditor = is_editor();   // admin or member (not view-only)
+?>
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,7 +56,10 @@ f.addEventListener('submit',async e=>{
 <script>
 window.APP = {
   user: <?= json_encode(public_user($user), JSON_UNESCAPED_UNICODE) ?>,
-  isAdmin: <?= is_admin() ? 'true' : 'false' ?>,
+  isAdmin: <?= $isAdmin ? 'true' : 'false' ?>,
+  isEditor: <?= $isEditor ? 'true' : 'false' ?>,
+  isViewer: <?= is_viewer() ? 'true' : 'false' ?>,
+  role: <?= json_encode($user['role']) ?>,
   csrf: <?= json_encode(csrf_token()) ?>,
   currency: <?= json_encode($cur) ?>,
   appName: <?= json_encode($appName) ?>
@@ -64,10 +70,17 @@ window.APP = {
   <header class="topbar">
     <div class="brand"><div class="logo">🏢</div><div><?= e($appName) ?><small>OFFICE OPERATIONS</small></div></div>
     <nav class="nav" id="nav">
+      <?php if ($isEditor): ?>
       <a data-view="dashboard" class="active">📊 <span class="txt">Dashboard</span></a>
       <a data-view="invoices">🧾 <span class="txt">Invoices</span></a>
+      <?php endif; ?>
       <a data-view="projects">🏗️ <span class="txt">Projects</span></a>
-      <?php if (is_admin()): ?>
+      <?php if ($isEditor): ?>
+      <a data-view="assets">💻 <span class="txt">Assets</span></a>
+      <?php endif; ?>
+      <a data-view="brochures">📚 <span class="txt">Brochures</span></a>
+      <?php if ($isAdmin): ?>
+      <a data-view="directory">🪪 <span class="txt">Directory</span></a>
       <a data-view="buildings">🏙️ <span class="txt">Buildings</span></a>
       <a data-view="users">👥 <span class="txt">Users</span></a>
       <a data-view="settings">⚙️ <span class="txt">Settings</span></a>
@@ -82,6 +95,7 @@ window.APP = {
   </header>
 
   <main class="main">
+    <?php if ($isEditor): ?>
     <!-- DASHBOARD -->
     <section class="view active" id="view-dashboard">
       <div class="page-head"><div><h1>Dashboard</h1><div class="sub">Your invoices and projects at a glance</div></div></div>
@@ -106,8 +120,8 @@ window.APP = {
             <option value="draft">Draft</option><option value="submitted">Submitted</option>
             <option value="approved">Approved</option><option value="paid">Paid</option><option value="rejected">Rejected</option>
           </select>
-          <input id="invFrom" type="date" title="From date">
-          <input id="invTo" type="date" title="To date">
+          <input id="invFrom" data-date placeholder="From date" title="From date">
+          <input id="invTo" data-date placeholder="To date" title="To date">
           <button class="btn sm" id="invClear">Clear</button>
           <button class="btn sm" id="invExport">⬇ CSV</button>
         </div>
@@ -127,12 +141,13 @@ window.APP = {
       </table></div></div>
       <div class="pager" id="invPager"></div>
     </section>
+    <?php endif; ?>
 
     <!-- PROJECTS -->
     <section class="view" id="view-projects">
       <div class="page-head">
         <div><h1>Projects</h1><div class="sub">New fit-outs across DD · 1-OAR · GE · KP</div></div>
-        <button class="btn primary" id="addProjectBtn">＋ Add project</button>
+        <?php if ($isEditor): ?><button class="btn primary" id="addProjectBtn">＋ Add project</button><?php endif; ?>
       </div>
       <div class="subtabs" id="projTabs">
         <button data-tab="buildings" class="active">🏙️ Building view</button>
@@ -151,6 +166,7 @@ window.APP = {
             <option value="open">Open</option><option value="in_progress">In progress</option>
             <option value="on_hold">On hold</option><option value="completed">Completed</option>
           </select>
+          <select id="prjType"><option value="">All types</option></select>
           <label class="flex tiny" style="gap:6px;color:var(--mut)"><input type="checkbox" id="prjOpenOnly" style="width:auto"> Open only</label>
         </div>
       </div>
@@ -169,7 +185,76 @@ window.APP = {
       </table></div></div>
     </section>
 
+    <!-- BROCHURES -->
+    <section class="view" id="view-brochures">
+      <div class="page-head">
+        <div><h1>Brochures</h1><div class="sub">Provider documents — Spintly · TATA · ACT</div></div>
+        <?php if ($isEditor): ?><button class="btn primary" id="addBrochureBtn">＋ Add brochure</button><?php endif; ?>
+      </div>
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input id="brSearch" placeholder="Search brochures, providers…">
+        </div>
+        <div class="filters">
+          <select id="brProvider"><option value="">All providers</option></select>
+        </div>
+      </div>
+      <div id="brList"><div class="spin"></div></div>
+    </section>
+
+    <?php if ($isEditor): ?>
+    <!-- ASSETS -->
+    <section class="view" id="view-assets">
+      <div class="page-head">
+        <div><h1>Asset Management</h1><div class="sub">Equipment, assignments &amp; history</div></div>
+        <button class="btn primary" id="addAssetBtn">＋ Add asset</button>
+      </div>
+      <div class="summary panel" id="assetSummary"></div>
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input id="assetSearch" placeholder="Search name, tag, serial…">
+        </div>
+        <div class="filters">
+          <select id="assetStatus">
+            <option value="">All statuses</option>
+            <option value="in_use">In use</option><option value="in_stock">In stock</option>
+            <option value="repair">Repair</option><option value="retired">Retired</option>
+          </select>
+          <select id="assetAssigned"><option value="">Anyone</option><option value="unassigned">Unassigned</option></select>
+          <button class="btn sm" id="assetExport">⬇ CSV</button>
+        </div>
+      </div>
+      <div class="panel"><div class="tablewrap"><table id="assetTable">
+        <thead><tr>
+          <th class="sortable" data-sort="name">Asset <span class="arr"></span></th>
+          <th class="sortable" data-sort="category">Category <span class="arr"></span></th>
+          <th>Tag / Serial</th>
+          <th class="sortable" data-sort="assignee">Assigned to <span class="arr"></span></th>
+          <th class="sortable" data-sort="assigned_on">Since <span class="arr"></span></th>
+          <th class="sortable" data-sort="status">Status <span class="arr"></span></th>
+          <th></th>
+        </tr></thead>
+        <tbody id="assetBody"></tbody>
+      </table></div></div>
+    </section>
+    <?php endif; ?>
+
     <?php if (is_admin()): ?>
+    <!-- DIRECTORY (admin) -->
+    <section class="view" id="view-directory">
+      <div class="page-head">
+        <div><h1>Directory</h1><div class="sub">People who can be assigned assets</div></div>
+        <button class="btn primary" id="addPersonBtn">＋ Add person</button>
+      </div>
+      <div class="panel panel-pad" id="m365Panel" style="margin-bottom:16px"><div class="spin"></div></div>
+      <div class="panel"><div class="tablewrap"><table>
+        <thead><tr><th>Name</th><th>Email</th><th>Title</th><th>Dept</th><th>Source</th><th>Assets</th><th>Status</th><th></th></tr></thead>
+        <tbody id="peopleBody"></tbody>
+      </table></div></div>
+    </section>
+
     <!-- BUILDINGS (admin) -->
     <section class="view" id="view-buildings">
       <div class="page-head"><div><h1>Buildings</h1><div class="sub">Set towers, floors &amp; colours so the visual matches reality</div></div></div>
@@ -209,9 +294,16 @@ window.APP = {
 <div class="toasts" id="toasts"></div>
 
 <script src="assets/js/app.js"></script>
+<script src="assets/js/datepicker.js"></script>
+<?php if ($isEditor): ?>
 <script src="assets/js/dashboard.js"></script>
 <script src="assets/js/invoices.js"></script>
+<?php endif; ?>
 <script src="assets/js/projects.js"></script>
-<?php if (is_admin()): ?><script src="assets/js/admin.js"></script><?php endif; ?>
+<?php if ($isEditor): ?>
+<script src="assets/js/assets.js"></script>
+<?php endif; ?>
+<script src="assets/js/brochures.js"></script>
+<?php if ($isAdmin): ?><script src="assets/js/admin.js"></script><?php endif; ?>
 <script>App.start();</script>
 </body></html>

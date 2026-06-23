@@ -1,6 +1,7 @@
 /* Projects view — building bars, cards, table, detail drawer */
 (() => {
   const state = { tab: 'buildings', sort: 'handover_date', dir: 'asc' };
+  const PROJECT_TYPES = ['CS', 'Fit-out', 'Other'];  // suggestions; field is free text
   let locations = [];
   let projects = [];
   let inited = false;
@@ -11,16 +12,20 @@
       q: document.getElementById('prjSearch').value.trim(),
       location_id: document.getElementById('prjLoc').value,
       status: document.getElementById('prjStatus').value,
+      project_type: document.getElementById('prjType').value,
       open_only: document.getElementById('prjOpenOnly').checked ? 1 : '',
     };
   }
 
   function init() {
     if (inited) return; inited = true;
-    document.getElementById('addProjectBtn').onclick = () => openForm();
+    const addBtn = document.getElementById('addProjectBtn');
+    if (addBtn) addBtn.onclick = () => openForm();   // absent for view-only users
     document.getElementById('prjSearch').oninput = () => { clearTimeout(debounce); debounce = setTimeout(refresh, 300); };
-    ['prjLoc','prjStatus'].forEach(id => document.getElementById(id).onchange = refresh);
+    ['prjLoc','prjStatus','prjType'].forEach(id => document.getElementById(id).onchange = refresh);
     document.getElementById('prjOpenOnly').onchange = refresh;
+    document.getElementById('prjType').innerHTML = '<option value="">All types</option>' +
+      PROJECT_TYPES.map(t => `<option value="${App.esc(t)}">${App.esc(t)}</option>`).join('');
     document.querySelectorAll('#projTabs button').forEach(b => b.onclick = () => {
       state.tab = b.dataset.tab;
       document.querySelectorAll('#projTabs button').forEach(x => x.classList.toggle('active', x === b));
@@ -149,6 +154,7 @@
         </div>
         <div class="where">
           <span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span>
+          ${p.project_type?`<span class="t" style="border-color:var(--accent-2)">${App.esc(p.project_type)}</span>`:''}
           ${p.tower?`<span class="t">Tower ${App.esc(p.tower)}</span>`:''}
           ${p.floor?`<span class="t">Floor ${p.floor}</span>`:''}
           ${p.file_count>0?`<span class="t">📎 ${p.file_count}</span>`:''}
@@ -176,7 +182,7 @@
       const actions = p.can_edit ? `<button class="btn icon sm ghost" data-edit="${p.id}" title="Edit">✎</button>
           <button class="btn icon sm danger" data-del="${p.id}" title="Delete">🗑</button>` : '';
       return `<tr data-proj="${p.id}" style="cursor:pointer">
-        <td><b>${App.esc(p.name)}</b>${p.client?`<div class="tiny muted">${App.esc(p.client)}</div>`:''}</td>
+        <td><b>${App.esc(p.name)}</b>${p.client?`<div class="tiny muted">${App.esc(p.client)}</div>`:''}${p.project_type?`<div class="tiny" style="color:var(--accent-2)">${App.esc(p.project_type)}</div>`:''}</td>
         <td><span class="loc-chip"><span class="loc-dot" style="background:${App.esc(p.location_color||'#6ea8fe')}"></span>${App.esc(p.location_code||'—')}</span></td>
         <td class="tiny">${p.tower?'Tower '+App.esc(p.tower):'—'}${p.floor?' · Fl '+p.floor:''}</td>
         <td class="nowrap">${hd}</td>
@@ -239,6 +245,7 @@
           <span class="loc-chip">${App.esc(p.location_name||'—')}</span>
           ${p.tower?`<span class="loc-chip">Tower ${App.esc(p.tower)}</span>`:''}
           ${p.floor?`<span class="loc-chip">Floor ${p.floor}</span>`:''}
+          ${p.project_type?`<span class="loc-chip">${App.esc(p.project_type)}</span>`:''}
           ${p.area_sqft?`<span class="loc-chip">${(+p.area_sqft).toLocaleString('en-IN')} sq.ft</span>`:''}
         </div>
         ${p.location_maps?`<a class="tiny mt" style="display:inline-block" href="${App.esc(p.location_maps)}" target="_blank" rel="noopener">📍 Open ${App.esc(p.location_code||'building')} in Google Maps</a>`:''}
@@ -281,14 +288,17 @@
         <div class="field"><label class="lbl">Client / company</label><input id="p_client" value="${App.esc(p.client||'')}"></div>
         <div class="field"><label class="lbl">Tower</label><input id="p_tower" value="${App.esc(p.tower||'')}" placeholder="A" list="towerlist"><datalist id="towerlist"></datalist></div>
         <div class="field"><label class="lbl">Floor</label><input id="p_floor" type="number" min="0" value="${p.floor??''}"></div>
-        <div class="field"><label class="lbl">Handover date</label><input id="p_handover" type="date" value="${p.handover_date||''}"></div>
+        <div class="field"><label class="lbl">Handover date</label><input id="p_handover" data-date value="${p.handover_date||''}"></div>
         <div class="field"><label class="lbl">Status</label><select id="p_status">${statusSel}</select></div>
+        <div class="field"><label class="lbl">Project type</label><input id="p_type" list="ptypelist" value="${App.esc(p.project_type||'')}" placeholder="e.g. CS"><datalist id="ptypelist">${PROJECT_TYPES.map(t=>`<option value="${App.esc(t)}">`).join('')}</datalist></div>
         <div class="field"><label class="lbl">Area (sq.ft)</label><input id="p_area" type="number" min="0" value="${p.area_sqft??''}"></div>
         <div class="field full"><label class="lbl">Notes</label><textarea id="p_notes">${App.esc(p.notes||'')}</textarea></div>
         <div class="field full"><label class="lbl">Documents</label><div id="f_files_p">${filesHtml}</div></div>
       </div>`,
       foot: `<button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="p_save">${id?'Save changes':'Add project'}</button>`
     });
+
+    App.wireDates(m);
 
     // tower suggestions from chosen location
     const towerDL = m.querySelector('#towerlist');
@@ -313,6 +323,7 @@
       const payload = { id, name, location_id: m.querySelector('#p_loc').value, client: m.querySelector('#p_client').value,
         tower: m.querySelector('#p_tower').value, floor: m.querySelector('#p_floor').value,
         handover_date: m.querySelector('#p_handover').value, status: m.querySelector('#p_status').value,
+        project_type: m.querySelector('#p_type').value,
         area_sqft: m.querySelector('#p_area').value, notes: m.querySelector('#p_notes').value };
       const btn = m.querySelector('#p_save'); btn.disabled = true; btn.textContent = 'Saving…';
       try {

@@ -75,6 +75,8 @@ function find_file(string $type, int $id): ?array {
 function h_file_download(): void {
     require_login();
     $type = ($_GET['type'] ?? 'invoice') === 'project' ? 'project' : 'invoice';
+    // Invoice scans are finance documents — never reachable by view-only users.
+    if ($type === 'invoice') require_editor();
     $id   = (int)($_GET['id'] ?? 0);
     $row  = find_file($type, $id);
     if (!$row) { http_response_code(404); echo 'Not found'; exit; }

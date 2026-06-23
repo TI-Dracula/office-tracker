@@ -58,6 +58,10 @@ function h_projects_list(): void {
         $where[] = 'p.status = ?';
         $params[] = $s;
     }
+    if ($pt = clean($g['project_type'] ?? null)) {
+        $where[] = 'p.project_type = ?';
+        $params[] = $pt;
+    }
     if (!empty($g['open_only'])) {
         $in = implode(',', array_fill(0, count(PROJECT_ACTIVE), '?'));
         $where[] = "p.status IN ($in)";
@@ -140,6 +144,7 @@ function h_project_save(): void {
         'floor'         => ($f = clean($in['floor'] ?? null)) !== null ? (int)$f : null,
         'handover_date' => clean($in['handover_date'] ?? null),
         'status'        => $status,
+        'project_type'  => clean($in['project_type'] ?? null),
         'area_sqft'     => ($a = clean($in['area_sqft'] ?? null)) !== null ? (int)$a : null,
         'client'        => clean($in['client'] ?? null),
         'notes'         => clean($in['notes'] ?? null),

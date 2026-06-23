@@ -88,7 +88,8 @@ const App = (() => {
     return (b/1048576).toFixed(1) + ' MB';
   }
   const STATUS_LABEL = { draft:'Draft', submitted:'Submitted', approved:'Approved', paid:'Paid', rejected:'Rejected',
-    open:'Open', in_progress:'In progress', on_hold:'On hold', completed:'Completed' };
+    open:'Open', in_progress:'In progress', on_hold:'On hold', completed:'Completed',
+    in_use:'In use', in_stock:'In stock', repair:'Repair', retired:'Retired' };
   const badge = s => `<span class="badge b-${s}">${STATUS_LABEL[s] || s}</span>`;
 
   /* ---------- Toast ---------- */
@@ -150,7 +151,12 @@ const App = (() => {
   /* ---------- Router ---------- */
   function register(view, fn) { loaders[view] = fn; }
   function show(view) {
-    if (!document.getElementById('view-' + view)) view = 'dashboard';
+    // Fall back to the first nav entry this role actually has (viewer → Projects).
+    if (!document.getElementById('view-' + view)) {
+      const first = document.querySelector('#nav a');
+      view = first ? first.dataset.view : view;
+    }
+    if (!document.getElementById('view-' + view)) return;
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-' + view).classList.add('active');
     document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('active', a.dataset.view === view));

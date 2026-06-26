@@ -342,6 +342,7 @@ const App = (() => {
     trigger.addEventListener('click', e => { e.preventDefault(); panel.classList.contains('show') ? close() : open(); });
     trigger.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
     panel.addEventListener('mousedown', e => {
+      e.stopPropagation();   // keep in-panel clicks off the document close-handler — nav rebuilds the grid, which would otherwise look like an "outside" click and shut the calendar
       const nav = e.target.closest('[data-nav]'), day = e.target.closest('[data-d]'), act = e.target.closest('[data-act]');
       if (nav) { e.preventDefault(); const t = view.y * 12 + view.m + (+nav.dataset.nav); view.y = Math.floor(t / 12); view.m = ((t % 12) + 12) % 12; build(); }
       else if (day) { e.preventDefault(); commit(`${view.y}-${pad(view.m + 1)}-${pad(+day.dataset.d)}`); }

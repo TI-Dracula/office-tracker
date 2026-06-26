@@ -8,58 +8,58 @@
 :root{
   color-scheme:dark;
 
-  /* ---- Backgrounds ---- */
-  --bg-base:#0A1410;
-  --bg-sunken:#070F0C;
-  --bg-raised:#0F1D17;
-  --bg-raised-2:#14271E;
-  --bg-overlay:#16291F;
-  --bg-scrim:rgba(4,9,7,.66);
+  /* ---- Backgrounds — stark near-black ---- */
+  --bg-base:#0B0B0A;
+  --bg-sunken:#070706;
+  --bg-raised:#121210;
+  --bg-raised-2:#161512;
+  --bg-overlay:#1A1813;
+  --bg-scrim:rgba(0,0,0,.74);
 
-  /* ---- Text ---- */
-  --tx-primary:#F3EEDD;
-  --tx-secondary:#C7CBBE;
-  --tx-muted:#8C9588;
-  --tx-disabled:#586056;
-  --tx-placeholder:#8C9588;
-  --tx-on-gold:#0A1410;
+  /* ---- Text — bone ---- */
+  --tx-primary:#ECE8DD;
+  --tx-secondary:#B8B4A8;
+  --tx-muted:#84827A;
+  --tx-disabled:#54524A;
+  --tx-placeholder:#84827A;
+  --tx-on-gold:#0B0B0A;
 
-  /* ---- Borders ---- */
-  --bd-hairline:rgba(243,238,221,.08);
-  --bd-strong:rgba(243,238,221,.16);
-  --bd-gold-hair:rgba(199,161,90,.34);
-  --bd-gradient:linear-gradient(90deg,transparent,rgba(243,238,221,.12) 18%,rgba(243,238,221,.12) 82%,transparent);
+  /* ---- Borders — hard hairlines ---- */
+  --bd-hairline:#2C2C28;
+  --bd-strong:#3E3E38;
+  --bd-gold-hair:#3E3E38;
+  --bd-gradient:none;
 
-  /* ---- Accent · Antique Gold ---- */
-  --ac:#C7A15A;
-  --ac-hover:#D8B770;
-  --ac-press:#B08D45;
-  --ac-tint:rgba(199,161,90,.14);
-  --ac-line:rgba(199,161,90,.40);
-  --ac-glow:rgba(199,161,90,.40);
+  /* ---- Accent · BLAZE ---- */
+  --ac:#FF4D1C;
+  --ac-hover:#FF6238;
+  --ac-press:#E03E12;
+  --ac-tint:rgba(255,77,28,.14);
+  --ac-line:rgba(255,77,28,.55);
+  --ac-glow:rgba(255,77,28,.45);
 
   /* ---- Semantic ---- */
-  --ok:#6FBE8F;     --ok-tint:rgba(111,190,143,.13);  --ok-bd:rgba(111,190,143,.30);
-  --warn:#E2B765;   --warn-tint:rgba(226,183,101,.13);--warn-bd:rgba(226,183,101,.30);
-  --bad:#E08A78;    --bad-tint:rgba(224,138,120,.13); --bad-bd:rgba(224,138,120,.30);
+  --ok:#6FBE8F;     --ok-tint:rgba(111,190,143,.13);  --ok-bd:rgba(111,190,143,.34);
+  --warn:#E2B765;   --warn-tint:rgba(226,183,101,.13);--warn-bd:rgba(226,183,101,.34);
+  --bad:#E0584A;    --bad-tint:rgba(224,88,74,.14);   --bad-bd:rgba(224,88,74,.40);
   --info:#7FB0CE;   --info-tint:rgba(127,176,206,.13);--info-bd:rgba(127,176,206,.30);
   --neutral:#9AA399;--neutral-tint:rgba(154,163,153,.12);--neutral-bd:rgba(154,163,153,.26);
 
-  /* ---- Type ---- */
-  --font-display:'Fraunces',Georgia,'Times New Roman',serif;
-  --font-ui:'Libre Franklin',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --font-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  /* ---- Type — Anton (display) · Archivo (ui) · Space Mono (data) ---- */
+  --font-display:'Anton',Impact,'Arial Narrow',sans-serif;
+  --font-ui:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'Space Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
 
-  /* ---- Radius ---- */
-  --r-xs:4px; --r-sm:6px; --r-md:9px; --r-lg:12px; --r-xl:16px; --r-pill:999px;
+  /* ---- Radius — SHARP, everything square ---- */
+  --r-xs:0; --r-sm:0; --r-md:0; --r-lg:0; --r-xl:0; --r-pill:0;
 
-  /* ---- Elevation ---- */
-  --e1:0 1px 2px rgba(0,0,0,.30), 0 1px 0 rgba(243,238,221,.03) inset;
-  --e2:0 2px 4px rgba(0,0,0,.34), 0 8px 16px rgba(0,0,0,.28);
-  --e3:0 8px 24px rgba(0,0,0,.40), 0 2px 6px rgba(0,0,0,.32);
-  --e4:0 24px 64px rgba(0,0,0,.55), 0 8px 24px rgba(0,0,0,.40);
-  --e-drawer:-24px 0 60px -20px rgba(0,0,0,.55);
-  --e-focus:0 0 14px var(--ac-glow);
+  /* ---- Elevation — flat; hard borders do the separating ---- */
+  --e1:0 0 0 0 transparent;
+  --e2:0 0 0 0 transparent;
+  --e3:0 0 0 0 transparent;
+  --e4:0 0 0 0 transparent;
+  --e-drawer:0 0 0 0 transparent;
+  --e-focus:0 0 0 2px var(--ac);
 
   /* ---- Motion ---- */
   --ease-out:cubic-bezier(.16,1,.3,1);
@@ -91,43 +91,43 @@
    ============================================================ */
 [data-theme="light"]{
   color-scheme:light;
-  --bg-base:#F4EFE3;
-  --bg-sunken:#ECE5D4;
-  --bg-raised:#FBF8EF;
-  --bg-raised-2:#FFFFFF;
-  --bg-overlay:#FFFFFF;
-  --bg-scrim:rgba(28,24,18,.42);
+  --bg-base:#E6E2D6;
+  --bg-sunken:#D8D3C4;
+  --bg-raised:#EEEADF;
+  --bg-raised-2:#F4F1E8;
+  --bg-overlay:#F4F1E8;
+  --bg-scrim:rgba(20,18,12,.5);
 
-  --tx-primary:#16271D;
-  --tx-secondary:#33483B;
-  --tx-muted:#5E6E61;
-  --tx-disabled:#A39C8C;
-  --tx-placeholder:#727065;
-  --tx-on-gold:#16271D;
+  --tx-primary:#16140F;
+  --tx-secondary:#3A372E;
+  --tx-muted:#6B675B;
+  --tx-disabled:#A8A293;
+  --tx-placeholder:#6B675B;
+  --tx-on-gold:#0B0B0A;
 
-  --bd-hairline:rgba(22,39,29,.10);
-  --bd-strong:rgba(22,39,29,.20);
-  --bd-gold-hair:rgba(154,123,51,.40);
-  --bd-gradient:linear-gradient(90deg,transparent,rgba(22,39,29,.12) 18%,rgba(22,39,29,.12) 82%,transparent);
+  --bd-hairline:rgba(22,20,15,.18);
+  --bd-strong:rgba(22,20,15,.34);
+  --bd-gold-hair:rgba(22,20,15,.34);
+  --bd-gradient:none;
 
-  --ac:#7E6220;
-  --ac-hover:#84692A;
-  --ac-press:#6E5722;
-  --ac-tint:rgba(154,123,51,.12);
-  --ac-line:rgba(154,123,51,.40);
-  --ac-glow:rgba(154,123,51,.34);
+  --ac:#FF4D1C;
+  --ac-hover:#E84418;
+  --ac-press:#CC3A12;
+  --ac-tint:rgba(255,77,28,.12);
+  --ac-line:rgba(255,77,28,.50);
+  --ac-glow:rgba(255,77,28,.35);
 
-  --ok:#28694A;     --ok-tint:#E3F0E7;  --ok-bd:rgba(47,125,82,.28);
-  --warn:#7E5810;   --warn-tint:#F6ECD6;--warn-bd:rgba(154,107,22,.28);
-  --bad:#B0442E;    --bad-tint:#F7E4E1; --bad-bd:rgba(176,68,46,.28);
-  --info:#2C6688;   --info-tint:#E6EDF7;--info-bd:rgba(44,102,136,.28);
-  --neutral:#4E5A50;--neutral-tint:#ECE8DE;--neutral-bd:rgba(94,110,97,.26);
+  --ok:#2F7D52;     --ok-tint:#DCEBE0;  --ok-bd:rgba(47,125,82,.32);
+  --warn:#9A6B16;   --warn-tint:#F2E7CF;--warn-bd:rgba(154,107,22,.32);
+  --bad:#C0392B;    --bad-tint:#F3DDD8; --bad-bd:rgba(192,57,43,.34);
+  --info:#2C6688;   --info-tint:#DEE8F1;--info-bd:rgba(44,102,136,.30);
+  --neutral:#4E5A50;--neutral-tint:#E2DDD0;--neutral-bd:rgba(78,90,80,.30);
 
-  --e1:0 1px 2px rgba(40,36,28,.05), 0 1px 1px rgba(40,36,28,.04);
-  --e2:0 2px 4px rgba(40,36,28,.06), 0 4px 10px rgba(40,36,28,.05);
-  --e3:0 8px 20px rgba(40,36,28,.10), 0 2px 6px rgba(40,36,28,.06);
-  --e4:0 20px 48px rgba(28,24,18,.18), 0 6px 16px rgba(28,24,18,.10);
-  --e-drawer:-16px 0 40px rgba(28,24,18,.14);
+  --e1:0 0 0 0 transparent;
+  --e2:0 0 0 0 transparent;
+  --e3:0 0 0 0 transparent;
+  --e4:0 0 0 0 transparent;
+  --e-drawer:0 0 0 0 transparent;
 }
 
 /* ============================================================
@@ -732,6 +732,34 @@ tr:hover .row-actions,tr:focus-within .row-actions{opacity:1;transform:none;poin
 .dot-link{cursor:pointer;color:var(--ac);font-weight:500}
 .dot-link:hover{color:var(--ac-hover);text-decoration:underline}
 code{font-family:var(--font-mono);font-size:.88em;background:var(--bg-sunken);padding:2px 6px;border-radius:var(--r-xs);border:1px solid var(--bd-hairline);color:var(--tx-primary)}
+
+/* ============================================================
+   BRUTALIST — flat, sharp, all-caps, one blaze accent
+   ============================================================ */
+.brand>div,.page-head h1,.card-title,.modal-head h3,.drawer-head h2,.login h1{
+  text-transform:uppercase;letter-spacing:.012em;font-weight:400}
+.lbl,.stat .lab,.summary .it span,.building .bsub,.blegend{
+  font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em}
+.btn.primary,[data-theme="light"] .btn.primary{background:var(--ac);border:1px solid var(--ac-press);color:var(--tx-on-gold);box-shadow:none}
+.btn.primary:hover,[data-theme="light"] .btn.primary:hover{background:var(--ac-hover);box-shadow:none}
+.chart .bar{background:var(--ac)}
+.nav a.active{background:var(--ac);color:var(--tx-on-gold)}
+.nav a.active::after{display:none}
+.nav a:hover{background:var(--bd-hairline)}
+.stat::before{display:none}
+.stat::after{background:var(--ac)}
+.login-wrap::after{display:none}
+.building::before{display:none}
+.floor.soon::after{display:none}
+.overlay,.drawer-backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}
+.summary{background:var(--bg-raised);border:1px solid var(--bd-strong)}
+.modal,.login{background:var(--bg-overlay);border:2px solid var(--bd-strong)}
+.page-head,.modal-head,.drawer-head{background-image:none;border-bottom:1px solid var(--bd-strong)}
+.modal-foot{background-image:none;border-top:1px solid var(--bd-strong)}
+.floor.active{background:var(--bcol);box-shadow:none}
+[data-theme="light"] .floor.active{background:var(--bcol);box-shadow:none}
+.floor.active:hover,[data-theme="light"] .floor.active:hover{box-shadow:none}
+.avatar,.u-av,.brand .logo,.login .logo-lg{border-radius:0}
 
 /* ============================================================
    PREMIUM INTERACTION POLISH

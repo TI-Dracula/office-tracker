@@ -81,8 +81,8 @@ window.APP = {
       <a data-view="projects">Projects</a>
       <?php if (is_member()): ?>
       <a data-view="invoices">IT Invoices</a>
-      <a data-view="pricing">Pricing</a>
       <?php endif; ?>
+      <a data-view="pricing">Pricing</a>
       <a data-view="brochures">Brochures</a>
       <?php if (is_admin()): ?>
       <a data-view="users">Users</a>
@@ -188,13 +188,11 @@ window.APP = {
       </table></div></div>
     </section>
 
-    <?php if (is_member()): ?>
-    <!-- IT PRICING -->
+    <!-- PRICING (sales + CS can view; it's a rate card, no invoices) -->
     <section class="view" id="view-pricing">
       <div class="page-head"><div><h1>Pricing</h1><div class="sub">Internet &amp; access-control rate cards · vendor + 18% GST + 30% MOSS convenience</div></div></div>
       <div id="pricingContent"><div class="spin"></div></div>
     </section>
-    <?php endif; ?>
 
     <!-- BROCHURES -->
     <section class="view" id="view-brochures">
